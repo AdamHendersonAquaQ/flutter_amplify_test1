@@ -17,20 +17,20 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  @override
-  initState() {
-    super.initState();
-    _configureAmplify();
-  }
+  // @override
+  // initState() {
+  //   super.initState();
+  //   _configureAmplify();
+  // }
 
-  Future<void> _configureAmplify() async {
-    try {
-      await Amplify.configure(amplifyconfig);
-    } on AmplifyAlreadyConfiguredException {
-      safePrint(
-          "Tried to reconfigure Amplify; this can occur when your app restarts on Android.");
-    }
-  }
+  // Future<void> _configureAmplify() async {
+  //   try {
+  //     await Amplify.configure(amplifyconfig);
+  //   } on AmplifyAlreadyConfiguredException {
+  //     safePrint(
+  //         "Tried to reconfigure Amplify; this can occur when your app restarts on Android.");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
