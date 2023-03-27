@@ -56,14 +56,15 @@ class _MainAppState extends State<MainApp> {
           children: [
             SafeArea(
               child: NavigationRail(
-                extended: constraints.maxWidth >= 600,
+                labelType: NavigationRailLabelType.all,
+                //extended: constraints.maxWidth >= 600,
                 destinations: const [
                   NavigationRailDestination(
-                    icon: Icon(Icons.home),
+                    icon: Icon(Icons.analytics_rounded),
                     label: Text('Raw Trades'),
                   ),
                   NavigationRailDestination(
-                    icon: Icon(Icons.favorite),
+                    icon: Icon(Icons.analytics_rounded),
                     label: Text('Trades'),
                   ),
                 ],

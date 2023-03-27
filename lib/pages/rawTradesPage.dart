@@ -14,14 +14,12 @@ class RawTradesPage extends StatefulWidget {
 
 class _RawTradesState extends State<RawTradesPage> {
   Future<List<RawMessage>> getRequest() async {
-    //replace your restFull API here.
     String url =
         "https://11nfsd5x34.execute-api.us-east-2.amazonaws.com/default/messages?TableName=tblRawFixMessages";
     final response = await http.get(Uri.parse(url));
 
     var responseData = json.decode(response.body);
 
-    //Creating a list to store input data;
     List<RawMessage> rawMessages = [];
     for (var message in responseData) {
       RawMessage rawMessage = RawMessage(
@@ -29,7 +27,6 @@ class _RawTradesState extends State<RawTradesPage> {
         message: message["message"],
       );
 
-      //Adding user to the list.
       rawMessages.add(rawMessage);
     }
     return rawMessages;
@@ -37,7 +34,11 @@ class _RawTradesState extends State<RawTradesPage> {
 
   @override
   Widget build(BuildContext context) {
+    var headings = ["ID", "Message"];
     return MaterialApp(
+      theme: ThemeData(
+        scaffoldBackgroundColor: Color.fromARGB(255, 83, 83, 83),
+      ),
       home: Scaffold(
           body: SingleChildScrollView(
         child: Container(
@@ -53,7 +54,7 @@ class _RawTradesState extends State<RawTradesPage> {
                 );
               } else {
                 return Container(
-                  color: Colors.white,
+                  color: Color.fromARGB(255, 83, 83, 83),
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 40),
                   child: Table(
                     columnWidths: const {
@@ -62,15 +63,53 @@ class _RawTradesState extends State<RawTradesPage> {
                     },
                     border: TableBorder.all(color: Colors.black),
                     children: [
-                      const TableRow(children: [
-                        Text('ID'),
-                        Text('Message'),
-                      ]),
+                      TableRow(
+                          decoration: const BoxDecoration(
+                            color: Color.fromARGB(255, 27, 27, 27),
+                          ),
+                          children: [
+                            for (var heading in headings)
+                              Center(
+                                  child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                child: Text(
+                                  heading,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                              )),
+                          ]),
                       for (var message in snapshot.data)
-                        TableRow(children: [
-                          Text(message.id.toString()),
-                          Text(message.message),
-                        ]),
+                        TableRow(
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(255, 44, 44, 44),
+                            ),
+                            children: [
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Text(
+                                    message.id.toString(),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Text(
+                                    message.message,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ]),
                     ],
                   ),
                 );
