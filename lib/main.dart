@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_amplify_test/pages/rawTradesPage.dart';
+import 'package:flutter_amplify_test/pages/dashboardpage.dart';
+import 'package:flutter_amplify_test/pages/positionspage.dart';
+import 'package:flutter_amplify_test/pages/rawtradespage.dart';
 import 'package:flutter_amplify_test/pages/tradespage.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
   runApp(MyApp());
@@ -35,18 +34,25 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  var selectedIndex = 0;
+  var selectedIndex = 1;
 
   @override
   Widget build(BuildContext context) {
     Widget page;
     switch (selectedIndex) {
       case 0:
-        page = const RawTradesPage();
+        page = const DashboardPage();
         break;
       case 1:
+        page = const PositionsPage();
+        break;
+      case 2:
         page = const TradesPage();
         break;
+      case 3:
+        page = const RawTradesPage();
+        break;
+
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -57,15 +63,22 @@ class _MainAppState extends State<MainApp> {
             SafeArea(
               child: NavigationRail(
                 labelType: NavigationRailLabelType.all,
-                //extended: constraints.maxWidth >= 600,
                 destinations: const [
                   NavigationRailDestination(
                     icon: Icon(Icons.analytics_rounded),
-                    label: Text('Raw Trades'),
+                    label: Text('Dashboard'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.analytics_rounded),
+                    label: Text('Positions'),
                   ),
                   NavigationRailDestination(
                     icon: Icon(Icons.analytics_rounded),
                     label: Text('Trades'),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.analytics_rounded),
+                    label: Text('Raw Trades'),
                   ),
                 ],
                 selectedIndex: selectedIndex,

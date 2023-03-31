@@ -11,4 +11,14 @@ class Trade {
       required this.id,
       required this.symbol,
       required this.lastPrice});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'clientName': clientName,
+      'quantity': quantity,
+      'symbol': symbol,
+      'lastPrice': lastPrice
+    };
+  }
 }
