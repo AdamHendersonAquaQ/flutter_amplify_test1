@@ -7,7 +7,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-import '../shared/colourVariables.dart';
+import '../shared/colourvariables.dart';
 import '../shared/subtitle.dart';
 
 class PositionsPage extends StatefulWidget {

@@ -3,7 +3,7 @@ import 'package:flutter_amplify_test/pages/tradespage.dart';
 
 import 'package:flutter/material.dart';
 
-import '../shared/colourVariables.dart';
+import '../shared/colourvariables.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
