@@ -7,6 +7,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import '../shared/colourVariables.dart';
 import '../shared/subtitle.dart';
 
 class PositionsPage extends StatefulWidget {
@@ -115,42 +116,40 @@ class _PositionsState extends State<PositionsPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 83, 83, 83),
+        scaffoldBackgroundColor: secondaryBackground,
       ),
       home: Scaffold(
-          body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
-          child: StreamBuilder(
-            stream: tradeStream(),
-            builder: (BuildContext ctx, AsyncSnapshot snapshot) {
-              if (snapshot.data == null) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                return Column(
-                  children: [
-                    Subtitle(
-                      subtitle: "Positions",
-                      flipShowFilter: _flipShowFilter,
-                    ),
-                    if (showFilter)
-                      FilterBox(
-                          flipShowFilter: _flipShowFilter,
-                          filterValues: filterValues),
-                    NewTable(
-                        currentSortColumn: _currentSortColumn,
-                        isSortAsc: _isSortAsc,
-                        headings: headings,
-                        data: snapshot.data,
-                        setSortColumn: _setSortColumn,
-                        setIsSortAsc: _setIsSortAsc)
-                  ],
-                );
-              }
-            },
-          ),
+          body: Container(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
+        child: StreamBuilder(
+          stream: tradeStream(),
+          builder: (BuildContext ctx, AsyncSnapshot snapshot) {
+            if (snapshot.data == null) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              return Column(
+                children: [
+                  Subtitle(
+                    subtitle: "Positions",
+                    flipShowFilter: _flipShowFilter,
+                  ),
+                  if (showFilter)
+                    FilterBox(
+                        flipShowFilter: _flipShowFilter,
+                        filterValues: filterValues),
+                  NewTable(
+                      currentSortColumn: _currentSortColumn,
+                      isSortAsc: _isSortAsc,
+                      headings: headings,
+                      data: snapshot.data,
+                      setSortColumn: _setSortColumn,
+                      setIsSortAsc: _setIsSortAsc)
+                ],
+              );
+            }
+          },
         ),
       )),
     );

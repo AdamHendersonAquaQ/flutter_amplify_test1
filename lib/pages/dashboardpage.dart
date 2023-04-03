@@ -3,6 +3,8 @@ import 'package:flutter_amplify_test/pages/tradespage.dart';
 
 import 'package:flutter/material.dart';
 
+import '../shared/colourVariables.dart';
+
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
@@ -14,16 +16,16 @@ class _DashboardState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF222222),
+      backgroundColor: background,
       body: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Expanded(
+          const Expanded(
             flex: 35,
-            child: Container(
-              color: Colors.blue,
-              child: const PositionsPage(),
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: PositionsPage(),
             ),
           ),
           Expanded(
@@ -31,19 +33,19 @@ class _DashboardState extends State<DashboardPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
+              children: const <Widget>[
                 Expanded(
                   flex: 20,
-                  child: Container(
-                    color: Colors.red,
-                    child: const Text('PnL', textAlign: TextAlign.center),
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text('PnL', textAlign: TextAlign.center),
                   ),
                 ),
                 Expanded(
                   flex: 80,
-                  child: Container(
-                    color: Colors.green,
-                    child: const TradesPage(),
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: TradesPage(),
                   ),
                 ),
               ],

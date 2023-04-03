@@ -1,9 +1,14 @@
 import 'dart:async';
+import 'package:flutter_amplify_test/shared/colourVariables.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_test/classes/trade.dart';
+
+import '../shared/filterbox.dart';
+import '../shared/subtitle.dart';
+import '../shared/table.dart';
 
 class TradesPage extends StatefulWidget {
   const TradesPage({super.key});
@@ -14,13 +19,42 @@ class TradesPage extends StatefulWidget {
 
 class _TradesState extends State<TradesPage> {
   int _currentSortColumn = 0;
+  void _setSortColumn([int? currentSortColumn]) {
+    setState(() {
+      _currentSortColumn = currentSortColumn!;
+    });
+  }
+
   bool _isSortAsc = false;
+  void _setIsSortAsc([bool? isSortAsc]) {
+    setState(() {
+      _isSortAsc = isSortAsc!;
+    });
+  }
+
+  bool showFilter = false;
+  void _flipShowFilter([int? temp]) {
+    setState(() {
+      showFilter = !showFilter;
+    });
+  }
+
   var headings = [
-    {'label': "ID", 'value': "id", 'filterVal': ''},
-    {'label': "Client Name", 'value': "clientName", 'filterVal': ''},
-    {'label': "Symbol", 'value': "symbol", 'filterVal': ''},
-    {'label': "Last Price", 'value': "lastPrice", 'filterVal': ''},
-    {'label': "Quantity", 'value': "quantity", 'filterVal': ''},
+    {'label': "Time", 'value': "transactionTime", 'type': 'text'},
+    {'label': "Symbol", 'value': "symbol", 'type': 'text'},
+    {'label': "Last Price", 'value': "lastPrice", 'type': 'posNegative'},
+    {'label': "Quantity", 'value': "quantity", 'type': 'text'},
+    {'label': "Client Name", 'value': "clientName", 'type': 'text'},
+  ];
+  var filterValues = [
+    {"label": "Min Time", "value": ""},
+    {"label": "Max Time", "value": ""},
+    {"label": "Symbol", "value": ""},
+    {"label": "Max Last Price", "value": ""},
+    {"label": "Min Last Price", "value": ""},
+    {"label": "Max Quantity", "value": ""},
+    {"label": "Min Quantity", "value": ""},
+    {"label": "Client Name", "value": ""},
   ];
   Stream<List<Trade>> tradeStream() async* {
     while (true) {
@@ -32,25 +66,69 @@ class _TradesState extends State<TradesPage> {
 
       List<Trade> trades = [];
       for (var trade in responseData) {
+        double price = trade["lastPrice"];
+        if (trade["side"] == "BUY") {
+          price = price * -1;
+        }
         Trade newTrade = Trade(
           id: trade["id"],
+          transactionTime: DateTime.parse(trade["transactTime"]),
           clientName: trade["clientName"],
-          lastPrice: trade["lastPrice"],
+          lastPrice: price,
           quantity: trade["quantity"],
           symbol: trade["symbol"],
         );
 
         trades.add(newTrade);
       }
-      for (var heading in headings) {
-        if (heading['filterVal']!.trim() != '') {
-          trades = trades
-              .where((x) => x
-                  .toMap()[heading['value']]
-                  .toString()
-                  .toLowerCase()
-                  .contains(heading['filterVal']!.toLowerCase()))
-              .toList();
+      for (var filter in filterValues) {
+        if (filter['value']!.trim() != '') {
+          switch (filter['label']) {
+            case "Max Time":
+              trades = trades
+                  .where((x) =>
+                      x.transactionTime.isBefore(filter['value'] as DateTime))
+                  .toList();
+              break;
+            case "Min Time":
+              trades = trades
+                  .where((x) =>
+                      x.transactionTime.isAfter(filter['value'] as DateTime))
+                  .toList();
+              break;
+            case "Symbol":
+            case "Client Name":
+              trades = trades
+                  .where((x) => x
+                      .toMap()['symbol']
+                      .toString()
+                      .toLowerCase()
+                      .contains(filter['value']!.trim().toLowerCase()))
+                  .toList();
+              break;
+            case "Max Last Price":
+              trades = trades
+                  .where((x) => x.lastPrice <= double.parse(filter['value']!))
+                  .toList();
+              break;
+            case "Min Last Price":
+              trades = trades
+                  .where((x) => x.lastPrice >= double.parse(filter['value']!))
+                  .toList();
+              break;
+            case "Max Quantity":
+              trades = trades
+                  .where((x) => x.quantity <= int.parse(filter['value']!))
+                  .toList();
+              break;
+            case "Min Quantity":
+              trades = trades
+                  .where((x) => x.quantity >= int.parse(filter['value']!))
+                  .toList();
+              break;
+            default:
+              break;
+          }
         }
       }
       if (_isSortAsc) {
@@ -75,201 +153,42 @@ class _TradesState extends State<TradesPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        scaffoldBackgroundColor: Color.fromARGB(255, 83, 83, 83),
-      ),
-      home: Scaffold(
-          body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 40),
-          child: StreamBuilder(
-            stream: tradeStream(),
-            builder: (BuildContext ctx, AsyncSnapshot snapshot) {
-              if (snapshot.data == null) {
-                return Container(
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              } else {
-                return Container(
-                    color: Color.fromARGB(255, 75, 75, 75),
-                    child: SizedBox(
-                        width: double.infinity,
-                        child: DataTable(
-                          dividerThickness: 1,
-                          dataRowHeight: 35,
-                          showBottomBorder: true,
-                          border: TableBorder.all(
-                            width: 1,
-                            color: Colors.black,
-                          ),
-                          headingRowColor: MaterialStateProperty.resolveWith(
-                              (states) => Colors.black),
-                          sortColumnIndex: _currentSortColumn,
-                          sortAscending: _isSortAsc,
-                          columns: [
-                            for (var heading in headings)
-                              DataColumn(
-                                label: Expanded(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: Column(children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 2),
-                                          child: Row(children: [
-                                            Expanded(
-                                              child: Text(
-                                                heading['label'].toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                            if (_currentSortColumn ==
-                                                headings.indexOf(heading))
-                                              Align(
-                                                alignment: Alignment.topRight,
-                                                child: Icon(
-                                                    _isSortAsc
-                                                        ? Icons.arrow_upward
-                                                        : Icons.arrow_downward,
-                                                    color: Colors.blue,
-                                                    size: 15),
-                                              )
-                                            else
-                                              const Align(
-                                                alignment: Alignment.topRight,
-                                                child: Icon(
-                                                    Icons.arrow_downward,
-                                                    color: Colors.black,
-                                                    size: 15),
-                                              )
-                                          ]),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
-                                          child: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                              maxWidth: 200,
-                                            ),
-                                            child: Container(
-                                              width: double.infinity,
-                                              height: 25,
-                                              decoration: const BoxDecoration(
-                                                color: Color.fromARGB(
-                                                    255, 243, 243, 243),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      color: Color.fromARGB(
-                                                          255, 102, 102, 102),
-                                                      spreadRadius: 2),
-                                                ],
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5),
-                                                child: TextField(
-                                                  onChanged: (text) {
-                                                    heading['filterVal'] = text;
-                                                  },
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.blue,
-                                                  ),
-                                                  decoration: InputDecoration(
-                                                      focusedBorder: null),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ]),
-                                    ),
-                                  ),
-                                ),
-                                onSort: (columnIndex, _) {
-                                  setState(() {
-                                    if (_currentSortColumn == columnIndex) {
-                                      _isSortAsc = !_isSortAsc;
-                                    } else {
-                                      _currentSortColumn = columnIndex;
-                                      _isSortAsc = false;
-                                    }
-                                  });
-                                },
-                              ),
-                          ],
-                          rows: [
-                            for (var trade in snapshot.data)
-                              DataRow(cells: [
-                                DataCell(
-                                  Center(
-                                    child: Text(
-                                      trade.id.toString(),
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Center(
-                                    child: Text(
-                                      trade.clientName,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Center(
-                                    child: Text(
-                                      trade.symbol,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Center(
-                                    child: Text(
-                                      trade.lastPrice.toString(),
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                DataCell(
-                                  Center(
-                                    child: Text(
-                                      trade.quantity.toString(),
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ]),
-                          ],
-                        )));
-              }
-            },
-          ),
+        theme: ThemeData(
+          scaffoldBackgroundColor: secondaryBackground,
         ),
-      )),
-    );
+        home: Scaffold(
+            body: Container(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                child: StreamBuilder(
+                    stream: tradeStream(),
+                    builder: (BuildContext ctx, AsyncSnapshot snapshot) {
+                      if (snapshot.data == null) {
+                        return Container(
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            Subtitle(
+                              subtitle: "Trade Blotter",
+                              flipShowFilter: _flipShowFilter,
+                            ),
+                            if (showFilter)
+                              FilterBox(
+                                  flipShowFilter: _flipShowFilter,
+                                  filterValues: filterValues),
+                            NewTable(
+                                currentSortColumn: _currentSortColumn,
+                                isSortAsc: _isSortAsc,
+                                headings: headings,
+                                data: snapshot.data,
+                                setSortColumn: _setSortColumn,
+                                setIsSortAsc: _setIsSortAsc)
+                          ],
+                        );
+                      }
+                    }))));
   }
 }

@@ -84,7 +84,8 @@ class _FilterState extends State<FilterBox> {
                             height: 30,
                             child: Padding(
                               padding: const EdgeInsets.all(5),
-                              child: TextField(
+                              child: TextFormField(
+                                initialValue: filter['value'],
                                 onChanged: (text) {
                                   filter['value'] = text;
                                 },
