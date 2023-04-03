@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:flutter_amplify_test/shared/colourVariables.dart';
+import 'package:flutter_amplify_test/shared/colourvariables.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
