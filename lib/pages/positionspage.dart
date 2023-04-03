@@ -1,10 +1,13 @@
 import 'dart:async';
 import 'package:flutter_amplify_test/classes/position.dart';
+import 'package:flutter_amplify_test/shared/filterbox.dart';
+import 'package:flutter_amplify_test/shared/table.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_amplify_test/classes/trade.dart';
+
+import '../shared/subtitle.dart';
 
 class PositionsPage extends StatefulWidget {
   const PositionsPage({super.key});
@@ -15,10 +18,34 @@ class PositionsPage extends StatefulWidget {
 
 class _PositionsState extends State<PositionsPage> {
   int _currentSortColumn = 0;
+  void _setSortColumn([int? currentSortColumn]) {
+    setState(() {
+      _currentSortColumn = currentSortColumn!;
+    });
+  }
+
   bool _isSortAsc = false;
+  void _setIsSortAsc([bool? isSortAsc]) {
+    setState(() {
+      _isSortAsc = isSortAsc!;
+    });
+  }
+
+  bool showFilter = false;
+  void _flipShowFilter([int? temp]) {
+    setState(() {
+      showFilter = !showFilter;
+    });
+  }
+
   var headings = [
-    {'label': "Symbol", 'value': "symbol", 'filterVal': ''},
-    {'label': "Position", 'value': "position", 'filterVal': ''},
+    {'label': "Symbol", 'value': "symbol", 'type': 'text'},
+    {'label': "Position", 'value': "position", 'type': 'posNegative'},
+  ];
+  var filterValues = [
+    {"label": "Symbol", "value": ""},
+    {"label": "Max Position", "value": ""},
+    {"label": "Min Position", "value": ""},
   ];
   Stream<List<Position>> tradeStream() async* {
     while (true) {
@@ -37,18 +64,33 @@ class _PositionsState extends State<PositionsPage> {
 
         positions.add(newPosition);
       }
-      for (var heading in headings) {
-        if (heading['filterVal']!.trim() != '') {
-          positions = positions
-              .where((x) => x
-                  .toMap()[heading['value']]
-                  .toString()
-                  .toLowerCase()
-                  .contains(heading['filterVal']!.toLowerCase()))
-              .toList();
+      for (var filter in filterValues) {
+        if (filter['value']!.trim() != '') {
+          switch (filter['label']) {
+            case "Symbol":
+              positions = positions
+                  .where((x) => x
+                      .toMap()['symbol']
+                      .toString()
+                      .toLowerCase()
+                      .contains(filter['value']!.trim().toLowerCase()))
+                  .toList();
+              break;
+            case "Max Position":
+              positions = positions
+                  .where((x) => x.position <= int.parse(filter['value']!))
+                  .toList();
+              break;
+            case "Min Position":
+              positions = positions
+                  .where((x) => x.position >= int.parse(filter['value']!))
+                  .toList();
+              break;
+            default:
+              break;
+          }
         }
       }
-
       if (_isSortAsc) {
         positions.sort((a, b) {
           var c = a.toMap();
@@ -73,148 +115,37 @@ class _PositionsState extends State<PositionsPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        scaffoldBackgroundColor: Color.fromARGB(255, 83, 83, 83),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 83, 83, 83),
       ),
       home: Scaffold(
           body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.fromLTRB(20, 20, 20, 40),
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
           child: StreamBuilder(
             stream: tradeStream(),
             builder: (BuildContext ctx, AsyncSnapshot snapshot) {
               if (snapshot.data == null) {
-                return Container(
-                  child: const Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
               } else {
                 return Column(
                   children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(5, 5, 5, 15),
-                      child: Row(
-                        children: const [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Positions",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                    Subtitle(
+                      subtitle: "Positions",
+                      flipShowFilter: _flipShowFilter,
                     ),
-                    Container(
-                        color: const Color.fromARGB(255, 75, 75, 75),
-                        child: SizedBox(
-                            width: double.infinity,
-                            child: DataTable(
-                              dividerThickness: 1,
-                              dataRowHeight: 35,
-                              headingRowHeight: 35,
-                              showBottomBorder: true,
-                              border: TableBorder.all(
-                                width: 1,
-                                color: Colors.black,
-                              ),
-                              headingRowColor:
-                                  MaterialStateProperty.resolveWith(
-                                      (states) => Colors.black),
-                              sortColumnIndex: _currentSortColumn,
-                              sortAscending: _isSortAsc,
-                              columns: [
-                                for (var heading in headings)
-                                  DataColumn(
-                                    label: Expanded(
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 35),
-                                          child: Row(children: [
-                                            Expanded(
-                                              child: Text(
-                                                heading['label'].toString(),
-                                                style: const TextStyle(
-                                                    color: Colors.white),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ),
-                                            if (_currentSortColumn ==
-                                                headings.indexOf(heading))
-                                              Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Icon(
-                                                    _isSortAsc
-                                                        ? Icons.arrow_upward
-                                                        : Icons.arrow_downward,
-                                                    color: Colors.blue,
-                                                    size: 20),
-                                              )
-                                            else
-                                              const Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Icon(
-                                                    Icons.arrow_downward,
-                                                    color: Colors.black,
-                                                    size: 20),
-                                              )
-                                          ]),
-                                        ),
-                                      ),
-                                    ),
-                                    onSort: (columnIndex, _) {
-                                      setState(() {
-                                        if (_currentSortColumn == columnIndex) {
-                                          _isSortAsc = !_isSortAsc;
-                                        } else {
-                                          _currentSortColumn = columnIndex;
-                                          _isSortAsc = false;
-                                        }
-                                      });
-                                    },
-                                  ),
-                              ],
-                              rows: [
-                                for (var pos in snapshot.data)
-                                  DataRow(
-                                      color: MaterialStateProperty.resolveWith<
-                                          Color>((Set<MaterialState> states) {
-                                        if (snapshot.data.indexOf(pos) % 2 ==
-                                            0) {
-                                          return const Color.fromARGB(
-                                                  255, 130, 174, 189)
-                                              .withOpacity(0.3);
-                                        }
-                                        return const Color.fromARGB(
-                                            255, 116, 116, 116);
-                                      }),
-                                      cells: [
-                                        for (var heading in headings)
-                                          DataCell(
-                                            Center(
-                                              child: Text(
-                                                pos
-                                                    .toMap()[heading['value']]
-                                                    .toString(),
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                      ]),
-                              ],
-                            ))),
+                    if (showFilter)
+                      FilterBox(
+                          flipShowFilter: _flipShowFilter,
+                          filterValues: filterValues),
+                    NewTable(
+                        currentSortColumn: _currentSortColumn,
+                        isSortAsc: _isSortAsc,
+                        headings: headings,
+                        data: snapshot.data,
+                        setSortColumn: _setSortColumn,
+                        setIsSortAsc: _setIsSortAsc)
                   ],
                 );
               }
