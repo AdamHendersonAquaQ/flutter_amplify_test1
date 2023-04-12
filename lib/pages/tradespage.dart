@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter_amplify_test/shared/colourvariables.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -47,14 +46,29 @@ class _TradesState extends State<TradesPage> {
     {'label': "Client Name", 'value': "clientName", 'type': 'text'},
   ];
   var filterValues = [
-    {"label": "Min Time", "value": ""},
-    {"label": "Max Time", "value": ""},
-    {"label": "Symbol", "value": ""},
-    {"label": "Max Last Price", "value": ""},
-    {"label": "Min Last Price", "value": ""},
-    {"label": "Max Quantity", "value": ""},
-    {"label": "Min Quantity", "value": ""},
-    {"label": "Client Name", "value": ""},
+    {
+      "label": "Time",
+      "type": "range",
+      "valType": "DateTime",
+      "value": "",
+      "value2": ""
+    },
+    {"label": "Symbol", "type": "text", "valType": "string", "value": ""},
+    {
+      "label": "Last Price",
+      "type": "range",
+      "valType": "double",
+      "value": "",
+      "value2": ""
+    },
+    {
+      "label": "Quantity",
+      "type": "range",
+      "valType": "int",
+      "value": "",
+      "value2": ""
+    },
+    {"label": "Client Name", "type": "text", "valType": "string", "value": ""},
   ];
   Stream<List<Trade>> tradeStream() async* {
     while (true) {
@@ -82,19 +96,34 @@ class _TradesState extends State<TradesPage> {
         trades.add(newTrade);
       }
       for (var filter in filterValues) {
-        if (filter['value']!.trim() != '') {
+        if (filter['value']!.trim() != '' ||
+            (filter['type'] == "range" && filter['value2']!.trim() != '')) {
           switch (filter['label']) {
-            case "Max Time":
-              trades = trades
-                  .where((x) =>
-                      x.transactionTime.isBefore(filter['value'] as DateTime))
-                  .toList();
-              break;
-            case "Min Time":
-              trades = trades
-                  .where((x) =>
-                      x.transactionTime.isAfter(filter['value'] as DateTime))
-                  .toList();
+            case "Time range":
+              bool val1IsDT = DateTime.tryParse(filter['value']!) != null;
+              bool val2IsDT = DateTime.tryParse(filter['value2']!) != null;
+              if ((val1IsDT || filter['value']! == "") &&
+                  (val2IsDT || filter['value2']! == "")) {
+                if (val1IsDT && val2IsDT) {
+                  trades = trades
+                      .where((x) =>
+                          x.transactionTime
+                              .isBefore(DateTime.parse(filter['value2']!)) &&
+                          x.transactionTime
+                              .isAfter(DateTime.parse(filter['value']!)))
+                      .toList();
+                } else if (val1IsDT && filter['value2']! == "") {
+                  trades = trades
+                      .where((x) => x.transactionTime
+                          .isAfter(DateTime.parse(filter['value']!)))
+                      .toList();
+                } else if (val2IsDT && filter['value']! == "") {
+                  trades = trades
+                      .where((x) => x.transactionTime
+                          .isBefore(DateTime.parse(filter['value2']!)))
+                      .toList();
+                }
+              }
               break;
             case "Symbol":
             case "Client Name":
@@ -106,25 +135,51 @@ class _TradesState extends State<TradesPage> {
                       .contains(filter['value']!.trim().toLowerCase()))
                   .toList();
               break;
-            case "Max Last Price":
-              trades = trades
-                  .where((x) => x.lastPrice <= double.parse(filter['value']!))
-                  .toList();
+            case "Last Price range":
+              if ((double.tryParse(filter['value']!) != null ||
+                      filter['value']! == "") &&
+                  (double.tryParse(filter['value2']!) != null ||
+                      filter['value2']! == "")) {
+                if (filter['value']! != "" && filter['value2']! != "") {
+                  trades = trades
+                      .where((x) =>
+                          x.lastPrice <= double.parse(filter['value2']!) &&
+                          x.lastPrice >= double.parse(filter['value']!))
+                      .toList();
+                } else if (filter['value'] != "") {
+                  trades = trades
+                      .where(
+                          (x) => x.lastPrice >= double.parse(filter['value']!))
+                      .toList();
+                } else if (filter['value2']! != "") {
+                  trades = trades
+                      .where(
+                          (x) => x.lastPrice <= double.parse(filter['value2']!))
+                      .toList();
+                }
+              }
               break;
-            case "Min Last Price":
-              trades = trades
-                  .where((x) => x.lastPrice >= double.parse(filter['value']!))
-                  .toList();
-              break;
-            case "Max Quantity":
-              trades = trades
-                  .where((x) => x.quantity <= int.parse(filter['value']!))
-                  .toList();
-              break;
-            case "Min Quantity":
-              trades = trades
-                  .where((x) => x.quantity >= int.parse(filter['value']!))
-                  .toList();
+            case "Quantity range":
+              if ((int.tryParse(filter['value']!) != null ||
+                      filter['value']! == "") &&
+                  (int.tryParse(filter['value2']!) != null ||
+                      filter['value2']! == "")) {
+                if (filter['value']! != "" && filter['value2']! != "") {
+                  trades = trades
+                      .where((x) =>
+                          x.quantity <= int.parse(filter['value2']!) &&
+                          x.quantity >= int.parse(filter['value']!))
+                      .toList();
+                } else if (filter['value'] != "") {
+                  trades = trades
+                      .where((x) => x.quantity >= int.parse(filter['value']!))
+                      .toList();
+                } else if (filter['value2']! != "") {
+                  trades = trades
+                      .where((x) => x.quantity <= int.parse(filter['value2']!))
+                      .toList();
+                }
+              }
               break;
             default:
               break;
@@ -152,43 +207,37 @@ class _TradesState extends State<TradesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(
-          scaffoldBackgroundColor: secondaryBackground,
-        ),
-        home: Scaffold(
-            body: Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                child: StreamBuilder(
-                    stream: tradeStream(),
-                    builder: (BuildContext ctx, AsyncSnapshot snapshot) {
-                      if (snapshot.data == null) {
-                        return Container(
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      } else {
-                        return Column(
-                          children: [
-                            Subtitle(
-                              subtitle: "Trade Blotter",
+    return Scaffold(
+        body: Container(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+            child: StreamBuilder(
+                stream: tradeStream(),
+                builder: (BuildContext ctx, AsyncSnapshot snapshot) {
+                  if (snapshot.data == null) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else {
+                    return Column(
+                      children: [
+                        Subtitle(
+                          subtitle: "Trade Blotter",
+                          flipShowFilter: _flipShowFilter,
+                        ),
+                        if (showFilter)
+                          FilterBox(
                               flipShowFilter: _flipShowFilter,
-                            ),
-                            if (showFilter)
-                              FilterBox(
-                                  flipShowFilter: _flipShowFilter,
-                                  filterValues: filterValues),
-                            NewTable(
-                                currentSortColumn: _currentSortColumn,
-                                isSortAsc: _isSortAsc,
-                                headings: headings,
-                                data: snapshot.data,
-                                setSortColumn: _setSortColumn,
-                                setIsSortAsc: _setIsSortAsc)
-                          ],
-                        );
-                      }
-                    }))));
+                              filterValues: filterValues),
+                        NewTable(
+                            currentSortColumn: _currentSortColumn,
+                            isSortAsc: _isSortAsc,
+                            headings: headings,
+                            data: snapshot.data,
+                            setSortColumn: _setSortColumn,
+                            setIsSortAsc: _setIsSortAsc)
+                      ],
+                    );
+                  }
+                })));
   }
 }

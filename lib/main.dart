@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 36, 36, 36),
       ),
       home: const MainApp(),
     );
@@ -58,6 +59,7 @@ class _MainAppState extends State<MainApp> {
     }
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
+        backgroundColor: const Color.fromARGB(255, 85, 85, 85),
         body: Row(
           children: [
             SafeArea(
@@ -91,7 +93,6 @@ class _MainAppState extends State<MainApp> {
             ),
             Expanded(
               child: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
                 child: page,
               ),
             ),

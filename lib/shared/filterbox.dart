@@ -10,8 +10,24 @@ class FilterBox extends StatefulWidget {
   State<FilterBox> createState() => _FilterState();
 }
 
+bool checkType(String value, String type) {
+  if (value == "") return true;
+  switch (type) {
+    case ("string"):
+      return true;
+    case ("int"):
+      return int.tryParse(value) != null;
+    case ("double"):
+      return double.tryParse(value) != null;
+    case ("DateTime"):
+      return DateTime.tryParse(value) != null;
+    default:
+      return false;
+  }
+}
+
 class _FilterState extends State<FilterBox> {
-  Color backgroundColor = Color.fromARGB(255, 192, 192, 192);
+  Color backgroundColor = Color.fromARGB(255, 179, 181, 182);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,7 +39,7 @@ class _FilterState extends State<FilterBox> {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 5, 10, 10),
+        padding: const EdgeInsets.fromLTRB(0, 5, 10, 5),
         child: Column(
           children: [
             Row(
@@ -51,60 +67,85 @@ class _FilterState extends State<FilterBox> {
                     ))
               ],
             ),
-            Table(columnWidths: const {
-              0: IntrinsicColumnWidth(),
-            }, children: [
-              for (var filter in widget.filterValues)
-                TableRow(
-                    decoration: BoxDecoration(
-                      color: backgroundColor,
-                    ),
-                    children: [
-                      TableCell(
-                        verticalAlignment: TableCellVerticalAlignment.middle,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-                          child: Text(
-                            "${filter['label']}:",
-                          ),
-                        ),
-                      ),
-                      TableCell(
-                        verticalAlignment: TableCellVerticalAlignment.middle,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 5),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: Colors.black,
-                                width: 1,
-                              ),
+            for (var filter in widget.filterValues)
+              Container(
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 15, bottom: 7),
+                  child: filter['type'] == "text"
+                      ? FilterTextBox(
+                          filter: filter,
+                          value: "value",
+                          label: filter['label'])
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: FilterTextBox(
+                                  filter: filter,
+                                  value: "value",
+                                  label: 'Min ${filter['label']}'),
                             ),
-                            height: 30,
-                            child: Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: TextFormField(
-                                initialValue: filter['value'],
-                                onChanged: (text) {
-                                  filter['value'] = text;
-                                },
-                                decoration: const InputDecoration(
-                                  contentPadding:
-                                      EdgeInsets.symmetric(vertical: 15.0),
-                                ),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.blue,
-                                ),
-                              ),
+                            const Icon(Icons.arrow_right_alt),
+                            Expanded(
+                              child: FilterTextBox(
+                                  filter: filter,
+                                  value: "value2",
+                                  label: 'Max ${filter['label']}'),
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-                    ])
-            ]),
+                ),
+              )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class FilterTextBox extends StatelessWidget {
+  const FilterTextBox({
+    super.key,
+    required this.filter,
+    required this.label,
+    required this.value,
+  });
+
+  final filter;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: checkType(filter[value], filter['valType'])
+              ? const Color.fromARGB(255, 77, 77, 77)
+              : Colors.red,
+          width: 1,
+        ),
+      ),
+      height: 30,
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: TextFormField(
+          initialValue: filter[value],
+          onChanged: (text) {
+            filter[value] = text;
+          },
+          decoration: InputDecoration(
+            hintText: label,
+            hintStyle: const TextStyle(fontSize: 14),
+            contentPadding: const EdgeInsets.symmetric(vertical: 15.0),
+          ),
+          style: const TextStyle(
+            fontSize: 15,
+            color: Colors.blue,
+          ),
         ),
       ),
     );

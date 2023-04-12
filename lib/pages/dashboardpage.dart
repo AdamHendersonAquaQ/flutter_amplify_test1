@@ -3,8 +3,6 @@ import 'package:flutter_amplify_test/pages/tradespage.dart';
 
 import 'package:flutter/material.dart';
 
-import '../shared/colourvariables.dart';
-
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
@@ -16,7 +14,7 @@ class _DashboardState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: background,
+      backgroundColor: const Color.fromARGB(255, 85, 85, 85),
       body: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -7,7 +7,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
-import '../shared/colourvariables.dart';
 import '../shared/subtitle.dart';
 
 class PositionsPage extends StatefulWidget {
@@ -44,9 +43,14 @@ class _PositionsState extends State<PositionsPage> {
     {'label': "Position", 'value': "position", 'type': 'posNegative'},
   ];
   var filterValues = [
-    {"label": "Symbol", "value": ""},
-    {"label": "Max Position", "value": ""},
-    {"label": "Min Position", "value": ""},
+    {"label": "Symbol", "type": "text", "valType": "string", "value": ""},
+    {
+      "label": "Position",
+      "type": "range",
+      "valType": "int",
+      "value": "",
+      "value2": ""
+    },
   ];
   Stream<List<Position>> tradeStream() async* {
     while (true) {
@@ -66,7 +70,8 @@ class _PositionsState extends State<PositionsPage> {
         positions.add(newPosition);
       }
       for (var filter in filterValues) {
-        if (filter['value']!.trim() != '') {
+        if (filter['value']!.trim() != '' ||
+            (filter['type'] == "range" && filter['value2']!.trim() != '')) {
           switch (filter['label']) {
             case "Symbol":
               positions = positions
@@ -77,15 +82,27 @@ class _PositionsState extends State<PositionsPage> {
                       .contains(filter['value']!.trim().toLowerCase()))
                   .toList();
               break;
-            case "Max Position":
-              positions = positions
-                  .where((x) => x.position <= int.parse(filter['value']!))
-                  .toList();
-              break;
-            case "Min Position":
-              positions = positions
-                  .where((x) => x.position >= int.parse(filter['value']!))
-                  .toList();
+            case "Position range":
+              if ((int.tryParse(filter['value']!) != null ||
+                      filter['value']! == "") &&
+                  (int.tryParse(filter['value2']!) != null ||
+                      filter['value2']! == "")) {
+                if (filter['value']! != "" && filter['value2']! != "") {
+                  positions = positions
+                      .where((x) =>
+                          x.position <= int.parse(filter['value2']!) &&
+                          x.position >= int.parse(filter['value']!))
+                      .toList();
+                } else if (filter['value'] != "") {
+                  positions = positions
+                      .where((x) => x.position >= int.parse(filter['value']!))
+                      .toList();
+                } else if (filter['value2']! != "") {
+                  positions = positions
+                      .where((x) => x.position <= int.parse(filter['value2']!))
+                      .toList();
+                }
+              }
               break;
             default:
               break;
@@ -114,12 +131,8 @@ class _PositionsState extends State<PositionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        scaffoldBackgroundColor: secondaryBackground,
-      ),
-      home: Scaffold(
-          body: Container(
+    return Scaffold(
+      body: Container(
         padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
         child: StreamBuilder(
           stream: tradeStream(),
@@ -151,7 +164,7 @@ class _PositionsState extends State<PositionsPage> {
             }
           },
         ),
-      )),
+      ),
     );
   }
 }
