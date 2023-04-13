@@ -1,3 +1,4 @@
+import 'package:flutter_amplify_test/pages/pnlpage.dart';
 import 'package:flutter_amplify_test/pages/positionspage.dart';
 import 'package:flutter_amplify_test/pages/tradespage.dart';
 
@@ -32,17 +33,16 @@ class _DashboardState extends State<DashboardPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: const <Widget>[
-                Expanded(
-                  flex: 20,
+                SizedBox(
+                  height: 100,
                   child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text('PnL', textAlign: TextAlign.center),
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
+                    child: PnLPage(),
                   ),
                 ),
                 Expanded(
-                  flex: 80,
                   child: Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
                     child: TradesPage(),
                   ),
                 ),
