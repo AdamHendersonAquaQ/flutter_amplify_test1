@@ -4,6 +4,7 @@ import 'package:flutter_amplify_test/shared/filterbox.dart';
 import 'package:flutter_amplify_test/shared/table.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:logger/logger.dart';
 
 import 'package:flutter/material.dart';
 
@@ -52,81 +53,104 @@ class _PositionsState extends State<PositionsPage> {
       "value2": ""
     },
   ];
+
+  DateTime lastUpdated = DateTime.now();
+  List<Position>? data;
+  var logger = Logger();
+
   Stream<List<Position>> tradeStream() async* {
     while (true) {
       await Future.delayed(const Duration(milliseconds: 300));
-      final response = await http.get(Uri.parse(
-          "https://11nfsd5x34.execute-api.us-east-2.amazonaws.com/default/messages?TableName=Positions"));
+      String url =
+          "https://11nfsd5x34.execute-api.us-east-2.amazonaws.com/default/messages?TableName=Positions";
+      try {
+        final response = await http.get(Uri.parse(url));
 
-      var responseData = json.decode(response.body);
+        var responseData = json.decode(response.body);
 
-      List<Position> positions = [];
-      for (var pos in responseData) {
-        Position newPosition = Position(
-          position: pos["Position"],
-          symbol: pos["Symbol"],
-        );
+        List<Position> positions = [];
+        for (var pos in responseData) {
+          Position newPosition = Position(
+            position: pos["Position"],
+            symbol: pos["Symbol"],
+          );
 
-        positions.add(newPosition);
+          positions.add(newPosition);
+        }
+        positions = filterPositions(positions);
+        sortPositions(positions);
+        lastUpdated = DateTime.now();
+        data = positions;
+      } catch (e) {
+        logger.e("Error retrieving Positions data from url: $url, retrying.");
       }
-      for (var filter in filterValues) {
-        if (filter['value']!.trim() != '' ||
-            (filter['type'] == "range" && filter['value2']!.trim() != '')) {
-          switch (filter['label']) {
-            case "Symbol":
-              positions = positions
-                  .where((x) => x
-                      .toMap()['symbol']
-                      .toString()
-                      .toLowerCase()
-                      .contains(filter['value']!.trim().toLowerCase()))
-                  .toList();
-              break;
-            case "Position range":
-              if ((int.tryParse(filter['value']!) != null ||
-                      filter['value']! == "") &&
-                  (int.tryParse(filter['value2']!) != null ||
-                      filter['value2']! == "")) {
-                if (filter['value']! != "" && filter['value2']! != "") {
-                  positions = positions
-                      .where((x) =>
-                          x.position <= int.parse(filter['value2']!) &&
-                          x.position >= int.parse(filter['value']!))
-                      .toList();
-                } else if (filter['value'] != "") {
-                  positions = positions
-                      .where((x) => x.position >= int.parse(filter['value']!))
-                      .toList();
-                } else if (filter['value2']! != "") {
-                  positions = positions
-                      .where((x) => x.position <= int.parse(filter['value2']!))
-                      .toList();
-                }
+
+      yield data!;
+    }
+  }
+
+  void sortPositions(List<Position> positions) {
+    if (_isSortAsc) {
+      positions.sort((a, b) {
+        var c = a.toMap();
+        var d = b.toMap();
+        return d[headings[_currentSortColumn]['value'].toString()]
+                .compareTo(c[headings[_currentSortColumn]['value'].toString()])
+            as int;
+      });
+    } else {
+      positions.sort((a, b) {
+        var c = a.toMap();
+        var d = b.toMap();
+        return c[headings[_currentSortColumn]['value'].toString()]
+                .compareTo(d[headings[_currentSortColumn]['value'].toString()])
+            as int;
+      });
+    }
+  }
+
+  List<Position> filterPositions(List<Position> positions) {
+    for (var filter in filterValues) {
+      if (filter['value']!.trim() != '' ||
+          (filter['type'] == "range" && filter['value2']!.trim() != '')) {
+        switch (filter['label']) {
+          case "Symbol":
+            positions = positions
+                .where((x) => x
+                    .toMap()['symbol']
+                    .toString()
+                    .toLowerCase()
+                    .contains(filter['value']!.trim().toLowerCase()))
+                .toList();
+            break;
+          case "Position range":
+            if ((int.tryParse(filter['value']!) != null ||
+                    filter['value']! == "") &&
+                (int.tryParse(filter['value2']!) != null ||
+                    filter['value2']! == "")) {
+              if (filter['value']! != "" && filter['value2']! != "") {
+                positions = positions
+                    .where((x) =>
+                        x.position <= int.parse(filter['value2']!) &&
+                        x.position >= int.parse(filter['value']!))
+                    .toList();
+              } else if (filter['value'] != "") {
+                positions = positions
+                    .where((x) => x.position >= int.parse(filter['value']!))
+                    .toList();
+              } else if (filter['value2']! != "") {
+                positions = positions
+                    .where((x) => x.position <= int.parse(filter['value2']!))
+                    .toList();
               }
-              break;
-            default:
-              break;
-          }
+            }
+            break;
+          default:
+            break;
         }
       }
-      if (_isSortAsc) {
-        positions.sort((a, b) {
-          var c = a.toMap();
-          var d = b.toMap();
-          return d[headings[_currentSortColumn]['value'].toString()].compareTo(
-              c[headings[_currentSortColumn]['value'].toString()]) as int;
-        });
-      } else {
-        positions.sort((a, b) {
-          var c = a.toMap();
-          var d = b.toMap();
-          return c[headings[_currentSortColumn]['value'].toString()].compareTo(
-              d[headings[_currentSortColumn]['value'].toString()]) as int;
-        });
-      }
-
-      yield positions;
     }
+    return positions;
   }
 
   @override
@@ -137,7 +161,7 @@ class _PositionsState extends State<PositionsPage> {
         child: StreamBuilder(
           stream: tradeStream(),
           builder: (BuildContext ctx, AsyncSnapshot snapshot) {
-            if (snapshot.data == null) {
+            if (data == null) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -147,6 +171,7 @@ class _PositionsState extends State<PositionsPage> {
                   Subtitle(
                     subtitle: "Positions",
                     flipShowFilter: _flipShowFilter,
+                    lastUpdated: lastUpdated,
                   ),
                   if (showFilter)
                     FilterBox(

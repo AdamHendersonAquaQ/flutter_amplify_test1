@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Subtitle extends StatelessWidget {
   final ValueChanged<int> flipShowFilter;
   final String subtitle;
-  const Subtitle(
-      {super.key, required this.flipShowFilter, required this.subtitle});
+  DateTime lastUpdated;
+  Subtitle(
+      {super.key,
+      required this.flipShowFilter,
+      required this.lastUpdated,
+      required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -15,14 +20,29 @@ class Subtitle extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                subtitle,
-                textAlign: TextAlign.left,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    subtitle,
+                    textAlign: TextAlign.left,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                  if (DateTime.now().difference(lastUpdated).inSeconds >= 10)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, top: 5),
+                      child: Text(
+                        "Last Update: ${DateFormat('yyyy/MM/dd kk:mm:ss').format(lastUpdated)}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             Align(
