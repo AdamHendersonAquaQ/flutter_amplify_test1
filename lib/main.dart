@@ -99,10 +99,6 @@ class _MainAppState extends State<MainApp> {
                     icon: Icon(Icons.analytics_rounded),
                     label: Text('Trades'),
                   ),
-                  NavigationRailDestination(
-                    icon: Icon(Icons.analytics_rounded),
-                    label: Text('Raw Trades'),
-                  ),
                 ],
                 selectedIndex: selectedIndex,
                 onDestinationSelected: (value) {
