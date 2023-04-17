@@ -7,9 +7,9 @@ const RESOURCES = {
 "canvaskit/profiling/canvaskit.js": "c21852696bc1cc82e8894d851c01921a",
 "canvaskit/profiling/canvaskit.wasm": "371bc4e204443b0d5e774d64a046eb99",
 "canvaskit/canvaskit.wasm": "3de12d898ec208a5f31362cc00f09b9e",
-"index.html": "3122a5f846c63330f69993a47f93b1d5",
-"/": "3122a5f846c63330f69993a47f93b1d5",
-"main.dart.js": "f1779b7cd04cf57ddae252fb7655a99e",
+"index.html": "ae7db568625ef7e44a32b601bd2b8f8d",
+"/": "ae7db568625ef7e44a32b601bd2b8f8d",
+"main.dart.js": "6f5329b502fa7bd3af31ca8889a74033",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
@@ -24,7 +24,7 @@ const RESOURCES = {
 "assets/packages/amplify_auth_cognito_dart/lib/src/workers/workers.min.js": "3dae7056fe1070de56454048cc3586ee",
 "assets/fonts/MaterialIcons-Regular.otf": "e7069dfd19b331be16bed984668fe080",
 "assets/FontManifest.json": "7b2a36307916a9721811788013e65289",
-"assets/NOTICES": "55e495e09e1659829f339d7b557555cf",
+"assets/NOTICES": "0d34b5ae9b7bc57a947efef5e6ccf7a0",
 "assets/AssetManifest.json": "edea5c203f21da14d0cb00ac488eb17b"
 };
 
