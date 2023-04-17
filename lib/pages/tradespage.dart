@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:flutter_amplify_test/classes/heading.dart';
+import 'package:flutter_amplify_test/shared/sortmethods.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -39,38 +41,42 @@ class _TradesState extends State<TradesPage> {
     });
   }
 
-  var headings = [
-    {'label': "Time", 'value': "transactionTime", 'type': 'text'},
-    {'label': "Symbol", 'value': "symbol", 'type': 'text'},
-    {'label': "Last Price", 'value': "lastPrice", 'type': 'posNegative'},
-    {'label': "Quantity", 'value': "quantity", 'type': 'text'},
-    {'label': "Client Name", 'value': "clientName", 'type': 'text'},
+  List<Heading> headingList = [
+    Heading(
+        label: "Time",
+        name: "transactionTime",
+        headingType: "text",
+        valueType: "DateTime",
+        value: "",
+        value2: ""),
+    Heading(
+        label: "Symbol",
+        name: "symbol",
+        headingType: "text",
+        valueType: "string",
+        value: ""),
+    Heading(
+        label: "Last Price",
+        name: "lastPrice",
+        headingType: "posNegative",
+        valueType: "double",
+        value: "",
+        value2: ""),
+    Heading(
+        label: "Quantity",
+        name: "quantity",
+        headingType: "text",
+        valueType: "int",
+        value: "",
+        value2: ""),
+    Heading(
+        label: "Client Name",
+        name: "clientName",
+        headingType: "text",
+        valueType: "string",
+        value: ""),
   ];
-  var filterValues = [
-    {
-      "label": "Time",
-      "type": "range",
-      "valType": "DateTime",
-      "value": "",
-      "value2": ""
-    },
-    {"label": "Symbol", "type": "text", "valType": "string", "value": ""},
-    {
-      "label": "Last Price",
-      "type": "range",
-      "valType": "double",
-      "value": "",
-      "value2": ""
-    },
-    {
-      "label": "Quantity",
-      "type": "range",
-      "valType": "int",
-      "value": "",
-      "value2": ""
-    },
-    {"label": "Client Name", "type": "text", "valType": "string", "value": ""},
-  ];
+
   DateTime lastUpdated = DateTime.now();
   List<Trade>? data;
   var logger = Logger();
@@ -102,8 +108,11 @@ class _TradesState extends State<TradesPage> {
 
           trades.add(newTrade);
         }
-        trades = filterTrades(trades);
-        sortTrades(trades);
+        trades = SortMethods.filterList(trades, headingList).cast<Trade>();
+
+        trades = SortMethods.sortList(
+                trades, _isSortAsc, headingList, _currentSortColumn)
+            .cast<Trade>();
         lastUpdated = DateTime.now();
         data = trades;
       } catch (e) {
@@ -111,120 +120,6 @@ class _TradesState extends State<TradesPage> {
       }
 
       yield data!;
-    }
-  }
-
-  List<Trade> filterTrades(List<Trade> trades) {
-    for (var filter in filterValues) {
-      if (filter['value']!.trim() != '' ||
-          (filter['type'] == "range" && filter['value2']!.trim() != '')) {
-        switch (filter['label']) {
-          case "Time":
-            bool val1IsDT = DateTime.tryParse(filter['value']!) != null;
-            bool val2IsDT = DateTime.tryParse(filter['value2']!) != null;
-            if ((val1IsDT || filter['value']! == "") &&
-                (val2IsDT || filter['value2']! == "")) {
-              if (val1IsDT && val2IsDT) {
-                trades = trades
-                    .where((x) =>
-                        x.transactionTime
-                            .isBefore(DateTime.parse(filter['value2']!)) &&
-                        x.transactionTime
-                            .isAfter(DateTime.parse(filter['value']!)))
-                    .toList();
-              } else if (val1IsDT && filter['value2']! == "") {
-                trades = trades
-                    .where((x) => x.transactionTime
-                        .isAfter(DateTime.parse(filter['value']!)))
-                    .toList();
-              } else if (val2IsDT && filter['value']! == "") {
-                trades = trades
-                    .where((x) => x.transactionTime
-                        .isBefore(DateTime.parse(filter['value2']!)))
-                    .toList();
-              }
-            }
-            break;
-          case "Symbol":
-          case "Client Name":
-            trades = trades
-                .where((x) => x
-                    .toMap()['symbol']
-                    .toString()
-                    .toLowerCase()
-                    .contains(filter['value']!.trim().toLowerCase()))
-                .toList();
-            break;
-          case "Last Price":
-            if ((double.tryParse(filter['value']!) != null ||
-                    filter['value']! == "") &&
-                (double.tryParse(filter['value2']!) != null ||
-                    filter['value2']! == "")) {
-              if (filter['value']! != "" && filter['value2']! != "") {
-                trades = trades
-                    .where((x) =>
-                        x.lastPrice <= double.parse(filter['value2']!) &&
-                        x.lastPrice >= double.parse(filter['value']!))
-                    .toList();
-              } else if (filter['value'] != "") {
-                trades = trades
-                    .where((x) => x.lastPrice >= double.parse(filter['value']!))
-                    .toList();
-              } else if (filter['value2']! != "") {
-                trades = trades
-                    .where(
-                        (x) => x.lastPrice <= double.parse(filter['value2']!))
-                    .toList();
-              }
-            }
-            break;
-          case "Quantity":
-            if ((int.tryParse(filter['value']!) != null ||
-                    filter['value']! == "") &&
-                (int.tryParse(filter['value2']!) != null ||
-                    filter['value2']! == "")) {
-              if (filter['value']! != "" && filter['value2']! != "") {
-                trades = trades
-                    .where((x) =>
-                        x.quantity <= int.parse(filter['value2']!) &&
-                        x.quantity >= int.parse(filter['value']!))
-                    .toList();
-              } else if (filter['value'] != "") {
-                trades = trades
-                    .where((x) => x.quantity >= int.parse(filter['value']!))
-                    .toList();
-              } else if (filter['value2']! != "") {
-                trades = trades
-                    .where((x) => x.quantity <= int.parse(filter['value2']!))
-                    .toList();
-              }
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    }
-    return trades;
-  }
-
-  void sortTrades(List<Trade> trades) {
-    if (_isSortAsc) {
-      trades.sort((a, b) {
-        var c = a.toMap();
-        var d = b.toMap();
-        return d[headings[_currentSortColumn]['value'].toString()]
-                .compareTo(c[headings[_currentSortColumn]['value'].toString()])
-            as int;
-      });
-    } else {
-      trades.sort((a, b) {
-        var c = a.toMap();
-        var d = b.toMap();
-        return c[headings[_currentSortColumn]['value'].toString()]
-                .compareTo(d[headings[_currentSortColumn]['value'].toString()])
-            as int;
-      });
     }
   }
 
@@ -251,11 +146,11 @@ class _TradesState extends State<TradesPage> {
                         if (showFilter)
                           FilterBox(
                               flipShowFilter: _flipShowFilter,
-                              filterValues: filterValues),
+                              filterValues: headingList),
                         NewTable(
                             currentSortColumn: _currentSortColumn,
                             isSortAsc: _isSortAsc,
-                            headings: headings,
+                            headings: headingList,
                             data: snapshot.data,
                             setSortColumn: _setSortColumn,
                             setIsSortAsc: _setIsSortAsc)

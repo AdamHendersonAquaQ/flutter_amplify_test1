@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_amplify_test/classes/heading.dart';
 
 class NewTable extends StatefulWidget {
   final int currentSortColumn;
@@ -6,8 +7,8 @@ class NewTable extends StatefulWidget {
   final bool isSortAsc;
   final ValueChanged<bool> setIsSortAsc;
 
-  final headings;
-  final data;
+  final List<Heading> headings;
+  final List data;
   const NewTable(
       {super.key,
       required this.currentSortColumn,
@@ -41,7 +42,7 @@ class _NewTableState extends State<NewTable> {
                     horizontalMargin: 0,
                     border: TableBorder.all(
                       width: 1,
-                      color: Color.fromARGB(255, 65, 65, 65),
+                      color: const Color.fromARGB(255, 65, 65, 65),
                     ),
                     headingRowColor: MaterialStateProperty.resolveWith(
                         (states) => Colors.black),
@@ -58,7 +59,7 @@ class _NewTableState extends State<NewTable> {
                                 child: Row(children: [
                                   Expanded(
                                     child: Text(
-                                      heading['label'].toString(),
+                                      heading.label,
                                       style:
                                           const TextStyle(color: Colors.white),
                                       textAlign: TextAlign.center,
@@ -110,12 +111,12 @@ class _NewTableState extends State<NewTable> {
                             }),
                             cells: [
                               for (var heading in widget.headings)
-                                heading['type'] == "text"
+                                heading.headingType == "text"
                                     ? DataCell(
                                         Center(
-                                          child: Text(
+                                          child: SelectableText(
                                             pos
-                                                .toMap()[heading['value']]
+                                                .toMap()[heading.name]
                                                 .toString(),
                                             textAlign: TextAlign.center,
                                             style: const TextStyle(
@@ -126,14 +127,13 @@ class _NewTableState extends State<NewTable> {
                                       )
                                     : DataCell(
                                         Container(
-                                          color:
-                                              pos.toMap()[heading['value']] >= 0
-                                                  ? Colors.green
-                                                  : Colors.red,
+                                          color: pos.toMap()[heading.name] >= 0
+                                              ? Colors.green
+                                              : Colors.red,
                                           child: Center(
-                                            child: Text(
+                                            child: SelectableText(
                                               pos
-                                                  .toMap()[heading['value']]
+                                                  .toMap()[heading.name]
                                                   .toString(),
                                               textAlign: TextAlign.center,
                                               style: const TextStyle(

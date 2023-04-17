@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_amplify_test/classes/heading.dart';
 
 class FilterBox extends StatefulWidget {
   final ValueChanged<int> flipShowFilter;
-  final filterValues;
+  final List<Heading> filterValues;
   const FilterBox(
       {super.key, required this.flipShowFilter, required this.filterValues});
 
@@ -74,25 +75,23 @@ class _FilterState extends State<FilterBox> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 15, bottom: 7),
-                  child: filter['type'] == "text"
+                  child: filter.valueType == "string"
                       ? FilterTextBox(
-                          filter: filter,
-                          value: "value",
-                          label: filter['label'])
+                          filter: filter, value: 1, label: filter.label)
                       : Row(
                           children: [
                             Expanded(
                               child: FilterTextBox(
                                   filter: filter,
-                                  value: "value",
-                                  label: 'Min ${filter['label']}'),
+                                  value: 1,
+                                  label: 'Min ${filter.label}'),
                             ),
                             const Icon(Icons.arrow_right_alt),
                             Expanded(
                               child: FilterTextBox(
                                   filter: filter,
-                                  value: "value2",
-                                  label: 'Max ${filter['label']}'),
+                                  value: 2,
+                                  label: 'Max ${filter.label}'),
                             ),
                           ],
                         ),
@@ -113,9 +112,9 @@ class FilterTextBox extends StatelessWidget {
     required this.value,
   });
 
-  final filter;
+  final Heading filter;
   final String label;
-  final String value;
+  final int value;
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +122,8 @@ class FilterTextBox extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(
-          color: checkType(filter[value], filter['valType'])
+          color: checkType(
+                  value == 1 ? filter.value : filter.value2!, filter.valueType)
               ? const Color.fromARGB(255, 77, 77, 77)
               : Colors.red,
           width: 1,
@@ -133,9 +133,13 @@ class FilterTextBox extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: TextFormField(
-          initialValue: filter[value],
+          initialValue: value == 1 ? filter.value : filter.value2,
           onChanged: (text) {
-            filter[value] = text;
+            if (value == 1) {
+              filter.value = text;
+            } else {
+              filter.value2 = text;
+            }
           },
           decoration: InputDecoration(
             hintText: label,

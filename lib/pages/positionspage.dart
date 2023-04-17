@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:flutter_amplify_test/classes/heading.dart';
 import 'package:flutter_amplify_test/classes/position.dart';
 import 'package:flutter_amplify_test/shared/filterbox.dart';
+import 'package:flutter_amplify_test/shared/sortmethods.dart';
 import 'package:flutter_amplify_test/shared/table.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -39,19 +41,20 @@ class _PositionsState extends State<PositionsPage> {
     });
   }
 
-  var headings = [
-    {'label': "Symbol", 'value': "symbol", 'type': 'text'},
-    {'label': "Position", 'value': "position", 'type': 'posNegative'},
-  ];
-  var filterValues = [
-    {"label": "Symbol", "type": "text", "valType": "string", "value": ""},
-    {
-      "label": "Position",
-      "type": "range",
-      "valType": "int",
-      "value": "",
-      "value2": ""
-    },
+  List<Heading> headingList = [
+    Heading(
+        label: "Symbol",
+        name: "symbol",
+        headingType: "text",
+        valueType: "string",
+        value: ""),
+    Heading(
+        label: "Position",
+        name: "position",
+        headingType: "posNegative",
+        valueType: "int",
+        value: "",
+        value2: ""),
   ];
 
   DateTime lastUpdated = DateTime.now();
@@ -68,7 +71,7 @@ class _PositionsState extends State<PositionsPage> {
 
         var responseData = json.decode(response.body);
 
-        List<Position> positions = [];
+        List<Position>? positions = [];
         for (var pos in responseData) {
           Position newPosition = Position(
             position: pos["Position"],
@@ -77,8 +80,11 @@ class _PositionsState extends State<PositionsPage> {
 
           positions.add(newPosition);
         }
-        positions = filterPositions(positions);
-        sortPositions(positions);
+        positions =
+            SortMethods.filterList(positions, headingList).cast<Position>();
+        positions = SortMethods.sortList(
+                positions, _isSortAsc, headingList, _currentSortColumn)
+            .cast<Position>();
         lastUpdated = DateTime.now();
         data = positions;
       } catch (e) {
@@ -87,70 +93,6 @@ class _PositionsState extends State<PositionsPage> {
 
       yield data!;
     }
-  }
-
-  void sortPositions(List<Position> positions) {
-    if (_isSortAsc) {
-      positions.sort((a, b) {
-        var c = a.toMap();
-        var d = b.toMap();
-        return d[headings[_currentSortColumn]['value'].toString()]
-                .compareTo(c[headings[_currentSortColumn]['value'].toString()])
-            as int;
-      });
-    } else {
-      positions.sort((a, b) {
-        var c = a.toMap();
-        var d = b.toMap();
-        return c[headings[_currentSortColumn]['value'].toString()]
-                .compareTo(d[headings[_currentSortColumn]['value'].toString()])
-            as int;
-      });
-    }
-  }
-
-  List<Position> filterPositions(List<Position> positions) {
-    for (var filter in filterValues) {
-      if (filter['value']!.trim() != '' ||
-          (filter['type'] == "range" && filter['value2']!.trim() != '')) {
-        switch (filter['label']) {
-          case "Symbol":
-            positions = positions
-                .where((x) => x
-                    .toMap()['symbol']
-                    .toString()
-                    .toLowerCase()
-                    .contains(filter['value']!.trim().toLowerCase()))
-                .toList();
-            break;
-          case "Position range":
-            if ((int.tryParse(filter['value']!) != null ||
-                    filter['value']! == "") &&
-                (int.tryParse(filter['value2']!) != null ||
-                    filter['value2']! == "")) {
-              if (filter['value']! != "" && filter['value2']! != "") {
-                positions = positions
-                    .where((x) =>
-                        x.position <= int.parse(filter['value2']!) &&
-                        x.position >= int.parse(filter['value']!))
-                    .toList();
-              } else if (filter['value'] != "") {
-                positions = positions
-                    .where((x) => x.position >= int.parse(filter['value']!))
-                    .toList();
-              } else if (filter['value2']! != "") {
-                positions = positions
-                    .where((x) => x.position <= int.parse(filter['value2']!))
-                    .toList();
-              }
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    }
-    return positions;
   }
 
   @override
@@ -176,11 +118,11 @@ class _PositionsState extends State<PositionsPage> {
                   if (showFilter)
                     FilterBox(
                         flipShowFilter: _flipShowFilter,
-                        filterValues: filterValues),
+                        filterValues: headingList),
                   NewTable(
                       currentSortColumn: _currentSortColumn,
                       isSortAsc: _isSortAsc,
-                      headings: headings,
+                      headings: headingList,
                       data: snapshot.data,
                       setSortColumn: _setSortColumn,
                       setIsSortAsc: _setIsSortAsc)
