@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter_amplify_test/classes/heading.dart';
-import 'package:flutter_amplify_test/shared/sortmethods.dart';
+import 'package:flutter_amplify_test/classes/sortmethods.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

@@ -1,15 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_test/pages/dashboardpage.dart';
 import 'package:flutter_amplify_test/pages/positionspage.dart';
-import 'package:flutter_amplify_test/pages/rawtradespage.dart';
 import 'package:flutter_amplify_test/pages/tradespage.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+
+  static _MyAppState of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>()!;
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.dark;
+  void toggleTheme() {
+    setState(() {
+      if (_themeMode == ThemeMode.light) {
+        _themeMode = ThemeMode.dark;
+      } else {
+        _themeMode = ThemeMode.light;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +35,15 @@ class MyApp extends StatelessWidget {
       title: 'Trade viewing App',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
-        scaffoldBackgroundColor: const Color.fromARGB(255, 36, 36, 36),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.lightBlue,
+            background: const Color.fromARGB(255, 224, 226, 226)),
+        primaryColor: const Color.fromARGB(255, 169, 171, 172),
       ),
+      darkTheme: ThemeData.dark(
+        useMaterial3: true,
+      ).copyWith(primaryColor: const Color.fromARGB(255, 85, 85, 85)),
+      themeMode: _themeMode,
       home: const MainApp(),
     );
   }
@@ -49,9 +73,6 @@ class _MainAppState extends State<MainApp> {
         break;
       case 2:
         page = const TradesPage();
-        break;
-      case 3:
-        page = const RawTradesPage();
         break;
 
       default:
@@ -89,6 +110,20 @@ class _MainAppState extends State<MainApp> {
                     selectedIndex = value;
                   });
                 },
+                trailing: Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.lightbulb_circle_outlined,
+                        size: 40,
+                      ),
+                      onPressed: () {
+                        MyApp.of(context).toggleTheme();
+                      },
+                    ),
+                  ),
+                ),
               ),
             ),
             Expanded(

@@ -68,7 +68,6 @@ class _PnLState extends State<PnLPage> {
                               "Profit and Loss (PnL)",
                               textAlign: TextAlign.left,
                               style: TextStyle(
-                                color: Colors.white,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
                               ),
@@ -83,7 +82,6 @@ class _PnLState extends State<PnLPage> {
                                   SelectableText(
                                     '\$${cy.format(data!.totalPnL)}',
                                     style: const TextStyle(
-                                      color: Colors.white,
                                       fontSize: 24,
                                     ),
                                   ),

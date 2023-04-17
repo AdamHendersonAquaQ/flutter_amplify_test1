@@ -26,7 +26,6 @@ class Subtitle extends StatelessWidget {
                     subtitle,
                     textAlign: TextAlign.left,
                     style: const TextStyle(
-                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 20,
                     ),
