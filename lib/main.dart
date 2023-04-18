@@ -106,6 +106,13 @@ class _MainAppState extends State<MainApp> {
                     selectedIndex = value;
                   });
                 },
+                leading: Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Image.asset(
+                    'images/praxis_logo.png',
+                    width: 50,
+                  ),
+                ),
                 trailing: Expanded(
                   child: Align(
                     alignment: Alignment.bottomCenter,
