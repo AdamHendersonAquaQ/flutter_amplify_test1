@@ -39,7 +39,6 @@ class _PnLState extends State<PnLPage> {
 
   final cy = NumberFormat("#,##0", "en_US");
 
-  final pnlGreen = const Color.fromARGB(255, 0, 255, 8);
   final pnlRed = const Color.fromARGB(255, 255, 17, 0);
 
   @override
@@ -91,15 +90,17 @@ class _PnLState extends State<PnLPage> {
                                       data!.change > 0
                                           ? Icons.keyboard_arrow_up_outlined
                                           : Icons.keyboard_arrow_down_outlined,
-                                      color:
-                                          data!.change > 0 ? pnlGreen : pnlRed,
+                                      color: data!.change > 0
+                                          ? Colors.green
+                                          : pnlRed,
                                     ),
                                   ),
                                   SelectableText(
                                     '\$${cy.format(data!.dailyPnL)} (${data!.change}%)',
                                     style: TextStyle(
-                                      color:
-                                          data!.change > 0 ? pnlGreen : pnlRed,
+                                      color: data!.change > 0
+                                          ? Colors.green
+                                          : pnlRed,
                                       fontSize: 24,
                                     ),
                                   ),
