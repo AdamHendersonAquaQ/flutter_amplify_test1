@@ -7,9 +7,9 @@ const RESOURCES = {
 "canvaskit/profiling/canvaskit.js": "c21852696bc1cc82e8894d851c01921a",
 "canvaskit/profiling/canvaskit.wasm": "371bc4e204443b0d5e774d64a046eb99",
 "canvaskit/canvaskit.wasm": "3de12d898ec208a5f31362cc00f09b9e",
-"index.html": "64e5b9e2ba0e51da898ac020f71e350b",
-"/": "64e5b9e2ba0e51da898ac020f71e350b",
-"main.dart.js": "330dfee0d6fcea667e195c58ffc8a90f",
+"index.html": "0d5ab4c0ff56d90f6681797c279ec1b8",
+"/": "0d5ab4c0ff56d90f6681797c279ec1b8",
+"main.dart.js": "ce49449d0769a2a7c213035dc89edd38",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
@@ -25,7 +25,9 @@ const RESOURCES = {
 "assets/fonts/MaterialIcons-Regular.otf": "e7069dfd19b331be16bed984668fe080",
 "assets/FontManifest.json": "7b2a36307916a9721811788013e65289",
 "assets/NOTICES": "0d34b5ae9b7bc57a947efef5e6ccf7a0",
-"assets/AssetManifest.json": "edea5c203f21da14d0cb00ac488eb17b"
+"assets/AssetManifest.json": "8f20b7f60b31e52b72f1bb7d1a48a0e2",
+"assets/assets/images/praxis_logo.png": "b4ba420c2d7f8ced81c9ddfa0e32c1f4",
+"assets/assets/images/praxis_transparent.png": "21abaf1244e9b98682a165127fa66949"
 };
 
 // The application shell files that are downloaded before a service worker can
