@@ -1,7 +1,7 @@
 class Trade {
   final int quantity;
   final String clientName;
-  final int id;
+  final String id;
   final DateTime transactionTime;
   final String symbol;
   final double lastPrice;

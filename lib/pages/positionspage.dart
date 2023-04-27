@@ -52,7 +52,7 @@ class _PositionsState extends State<PositionsPage> {
         label: "Position",
         name: "position",
         headingType: "posNegative",
-        valueType: "int",
+        valueType: "double",
         value: "",
         value2: ""),
   ];
@@ -65,7 +65,7 @@ class _PositionsState extends State<PositionsPage> {
     while (true) {
       await Future.delayed(const Duration(milliseconds: 300));
       String url =
-          "https://11nfsd5x34.execute-api.us-east-2.amazonaws.com/default/messages?TableName=Positions";
+          "https://11nfsd5x34.execute-api.us-east-2.amazonaws.com/default/messages?TableName=tblPositions";
       try {
         final response = await http.get(Uri.parse(url));
 
@@ -74,8 +74,8 @@ class _PositionsState extends State<PositionsPage> {
         List<Position>? positions = [];
         for (var pos in responseData) {
           Position newPosition = Position(
-            position: pos["Position"],
-            symbol: pos["Symbol"],
+            position: double.parse(pos["position"]),
+            symbol: pos["coreSymbol"],
           );
 
           positions.add(newPosition);

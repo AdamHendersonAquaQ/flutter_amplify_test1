@@ -1,6 +1,6 @@
 class Position {
   final String symbol;
-  final int position;
+  final double position;
 
   Position({required this.symbol, required this.position});
 

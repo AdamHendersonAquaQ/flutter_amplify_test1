@@ -85,7 +85,7 @@ class _TradesState extends State<TradesPage> {
     while (true) {
       await Future.delayed(const Duration(milliseconds: 300));
       String url =
-          "https://11nfsd5x34.execute-api.us-east-2.amazonaws.com/default/messages?TableName=Trades";
+          "https://11nfsd5x34.execute-api.us-east-2.amazonaws.com/default/messages?TableName=trades-dev";
       try {
         final response = await http.get(Uri.parse(url));
 
