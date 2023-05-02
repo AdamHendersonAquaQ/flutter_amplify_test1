@@ -2,22 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_amplify_test/pages/dashboardpage.dart';
 import 'package:flutter_amplify_test/pages/positionspage.dart';
 import 'package:flutter_amplify_test/pages/tradespage.dart';
+import 'package:praxis_internals/main.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+class MyApp1 extends StatefulWidget {
+  const MyApp1({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp1> createState() => _MyAppState();
 
   static _MyAppState of(BuildContext context) =>
       context.findAncestorStateOfType<_MyAppState>()!;
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp1> {
   ThemeMode _themeMode = ThemeMode.dark;
   void toggleTheme() {
     setState(() {
