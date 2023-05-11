@@ -16,7 +16,7 @@ dependencies:
     git:
       url: git@github.com:AquaQAnalytics/Praxis-Flutter-Internals.git
       path: praxis_internals
-      ref: "02dd3fd"
+      ref: "ef62d56"
 
 dev_dependencies:
   flutter_test:
