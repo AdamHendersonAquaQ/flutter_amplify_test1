@@ -5,15 +5,11 @@ import 'package:flutter_amplify_test/pages/tradespage.dart';
 import 'package:praxis_internals/classes/praxis_service.dart';
 import 'package:praxis_internals/main.dart';
 
-const envUrl =
-    "https://pgrgyn5pd4.execute-api.us-east-1.amazonaws.com/prod/api";
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await PraxisService.configure();
+  await PraxisService.configure("prod");
 
-  runApp(const MyApp(
-    envUrl: envUrl,
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp1 extends StatefulWidget {
