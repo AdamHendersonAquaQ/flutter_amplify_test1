@@ -102488,7 +102488,7 @@ else s.d=B.E7},
 $S:0}
 A.avR.prototype={
 $1(a){this.a.a.toString
-return new A.vP("https://vhhcfs1dv2.execute-api.us-east-2.amazonaws.com/prod/api",null)},
+return new A.vP("https://pgrgyn5pd4.execute-api.us-east-1.amazonaws.com/prod/api",null)},
 $S:641}
 A.Fu.prototype={
 au(){return new A.NY(A.ZX(),A.a3m(null),A.a3m(null),B.l)}}
