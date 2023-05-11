@@ -6,7 +6,7 @@ import 'package:praxis_internals/classes/praxis_service.dart';
 import 'package:praxis_internals/main.dart';
 
 const envUrl =
-    "https://vhhcfs1dv2.execute-api.us-east-2.amazonaws.com/prod/api";
+    "https://pgrgyn5pd4.execute-api.us-east-1.amazonaws.com/prod/api";
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await PraxisService.configure();
