@@ -1,3 +1,3 @@
-# flutter_amplify_test
+# praxis_dashboard
 
-A new Flutter project.
+Production enviroment for the Praxis dashboard.
