@@ -452,8 +452,8 @@ packages:
     dependency: "direct main"
     description:
       path: praxis_internals
-      ref: "5a2cec1"
-      resolved-ref: "5a2cec1d3d98b2b7c68cd1ad5bcd853c7f7f6859"
+      ref: "77d0235"
+      resolved-ref: "77d023575f7693ab0b91c4f85adad0a8a7412874"
       url: "git@github.com:AquaQAnalytics/Praxis-Flutter-Internals.git"
     source: git
     version: "0.0.1"
