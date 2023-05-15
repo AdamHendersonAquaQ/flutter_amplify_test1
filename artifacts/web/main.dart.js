@@ -29455,7 +29455,7 @@ if(p.c==="text")o=A.b5H(r.i(b,a),p)
 else{o=J.SV(r.i(b,a).cI().i(0,p.b),0)?B.l3:B.dw
 o=new A.c4(B.MN,A.eg(n,A.b5H(r.i(b,a),p),n,n,new A.ez(o,n,n,n,n,n,B.at),n,n,n,n),n)}m.push(new A.oh(o))}return new A.oi(n,m,new A.c8(new A.aSA(a),t.h2))},
 b5H(a,b){var s=b.b,r=a.cI().i(0,s)
-if(s==="position"||s==="latestPrice")s=!J.f(r,-1/0)?$.b9v().jn(a.cI().i(0,s)):""
+if(s==="position"||s==="latestPrice"||s==="lastPrice")s=!J.f(r,-1/0)?$.b9v().jn(a.cI().i(0,s)):""
 else s=s==="quantity"?$.b9w().jn(a.cI().i(0,s)):J.b7(a.cI().i(0,s))
 return A.t0(A.aVc(s,null,B.dS),null,null)},
 IV:function IV(a,b,c,d,e,f,g,h,i){var _=this
