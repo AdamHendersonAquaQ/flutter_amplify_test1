@@ -102644,16 +102644,16 @@ e=k
 j=J.aO(B.R.cL(0,A.SD(J.aO(A.Sr(e.e).c.a,"charset")).cL(0,e.w)),0)
 i=0
 h=null
-if(m.f!=null&&J.aO(j,"pnl_change")!=null){e=m.f.a
+if(m.f!=null&&J.aO(j,"pnl")!=null){e=m.f.a
 e.toString
-if(e>J.aO(j,"pnl_change")){h=m.f.a
+if(e>J.aO(j,"pnl")){h=m.f.a
 i=-1}else{e=m.f.a
 e.toString
-if(e<J.aO(j,"pnl_change")){h=m.f.a
+if(e<J.aO(j,"pnl")){h=m.f.a
 i=1}else{e=m.f
 d=e==null
 if((d?null:e.b)!=null)h=d?null:e.b
-i=e.c}}m.f=h==null?new A.Br(J.aO(j,"pnl_change"),null,i):new A.Br(J.aO(j,"pnl_change"),h,i)}else m.f=new A.Br(J.aO(j,"pnl_change"),null,i)
+i=e.c}}m.f=h==null?new A.Br(J.aO(j,"pnl"),null,i):new A.Br(J.aO(j,"pnl"),h,i)}else m.f=new A.Br(J.aO(j,"pnl"),null,i)
 m.e=new A.cp(Date.now(),!1)
 p=2
 s=8
@@ -102683,22 +102683,21 @@ return A.K7(s,A.eg(s,A.aVS(new A.aMU(this,a),this.fo(),t.ju),s,s,s,s,s,B.Nd,s))}
 A.aMU.prototype={
 $2(a,b){var s,r,q,p,o=null,n=this.a,m=n.f
 if(m==null)return B.jg
-else{m=m.a
-m.toString
+else{m=m.c
 s=m>0
 r=s?B.Pj:B.Pi
 if(m===0)m=A.a3(this.b).go
 else m=s?B.l3:B.dw
 m=A.Ah(r,m,o)
 s=n.f
-s=s.c===0?"No Previous value available":"Previous: $"+n.w.jn(s.b)
+s=s.c===0?"No Previous PnL available":"Previous PnL: $"+n.w.jn(s.b)
 r=n.f.a
 r=r!=null?"$"+n.w.jn(r):"PnL is currently unavailable"
-q=n.f.a
+q=n.f.c
 if(q===0)q=B.n
-else{q.toString
-q=q>0?B.l3:B.dw}p=t.p
-return A.iQ(A.a([A.n0(new A.h4(B.e2,o,o,new A.c4(B.MW,A.kF(A.a([B.O2,new A.c4(B.MQ,new A.h4(B.d8,o,o,A.kF(A.a([new A.c4(B.Ni,m,o),A.aW6(A.aVc(r,A.fi(o,o,q,o,o,o,o,o,o,o,o,24,o,o,o,o,o,!0,o,o,o,o,o,o,o,o),o),s)],p),B.a4,B.a9,B.a5,o),o),o)],p),B.a4,B.a9,B.a5,o),o),o),1),new A.c4(B.MO,new A.h4(B.Gi,o,o,new A.I0(n.e,o),o),o)],p),B.a4,B.a9,B.a5)}},
+else q=q>0?B.l3:B.dw
+p=t.p
+return A.iQ(A.a([A.n0(new A.h4(B.e2,o,o,new A.c4(B.MW,A.kF(A.a([B.O3,new A.c4(B.MQ,new A.h4(B.d8,o,o,A.kF(A.a([new A.c4(B.Ni,m,o),A.aW6(A.aVc(r,A.fi(o,o,q,o,o,o,o,o,o,o,o,24,o,o,o,o,o,!0,o,o,o,o,o,o,o,o),o),s)],p),B.a4,B.a9,B.a5,o),o),o)],p),B.a4,B.a9,B.a5,o),o),o),1),new A.c4(B.MO,new A.h4(B.Gi,o,o,new A.I0(n.e,o),o),o)],p),B.a4,B.a9,B.a5)}},
 $S:106}
 A.Jr.prototype={
 au(){return new A.PQ(A.a([new A.n3("Symbol","symbol","text","string","",null),new A.n3("Position","position","posNegative","double","",""),new A.n3("Latest Price","latestPrice","text","double","","")],t.jv),new A.cp(Date.now(),!1),A.ZY(),B.l)}}
@@ -109731,15 +109730,15 @@ B.dm=new A.XM(0,"tight")
 B.cq=new A.m5(6,700)
 B.E6=new A.x(!0,null,null,null,null,null,20,B.cq,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.dR=new A.p_(0,"left")
-B.a7L=new A.lG("Profit and Loss (PnL) Change:",null,B.E6,B.dR,null,null,null,null,null)
-B.O2=new A.tl(1,B.dm,B.a7L,null)
+B.a7M=new A.lG("Profit and Loss (PnL)",null,B.E6,B.dR,null,null,null,null,null)
+B.O3=new A.tl(1,B.dm,B.a7M,null)
 B.N1=new A.aW(10,10,10,10)
 B.Bs=new A.Jr(null)
 B.ZI=new A.c4(B.N1,B.Bs,null)
 B.O4=new A.tl(35,B.dm,B.ZI,null)
 B.a4U=new A.x(!0,B.cH,null,null,null,null,16,B.cq,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.a7M=new A.lG("Filter",null,B.a4U,B.dR,null,null,null,null,null)
-B.ZM=new A.c4(B.pk,B.a7M,null)
+B.a7L=new A.lG("Filter",null,B.a4U,B.dR,null,null,null,null,null)
+B.ZM=new A.c4(B.pk,B.a7L,null)
 B.O5=new A.tl(1,B.dm,B.ZM,null)
 B.O6=new A.H6(null,null,null,null,null,null,null,null,null,null,null)
 B.k3=new A.pV(!1,!1,!1,!1)
@@ -110738,8 +110737,8 @@ B.a2_=new A.nA(null,100,B.ZL,null)
 B.N5=new A.aW(10,5,10,10)
 B.Ec=new A.LP(null)
 B.ZK=new A.c4(B.N5,B.Ec,null)
-B.O3=new A.tl(1,B.dm,B.ZK,null)
-B.Uq=A.a(s([B.a2_,B.O3]),t.p)
+B.O2=new A.tl(1,B.dm,B.ZK,null)
+B.Uq=A.a(s([B.a2_,B.O2]),t.p)
 B.Z3=new A.u(0,2)
 B.Hy=new A.h7(0.75,B.e4,B.ol,B.Z3,1.5)
 B.Us=A.a(s([B.Hy]),t.sq)
