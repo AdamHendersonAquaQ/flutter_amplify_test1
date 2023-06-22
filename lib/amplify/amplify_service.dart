@@ -1,10 +1,8 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
-
-import 'amplifyconfiguration.dart';
-import '../authentication/authentication_service.dart';
+import 'package:praxis_internals/amplify/amplifyconfiguration.dart';
+import 'package:praxis_internals/authentication/authentication_service.dart';
 
 class AmplifyService {
-
   static Future<void> configureAmplify() async {
     await _configureAmplify();
   }
