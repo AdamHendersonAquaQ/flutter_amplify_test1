@@ -34,8 +34,7 @@ class _DatePickersState extends State<DatePickers> {
             selectedDate = date;
           });
         },
-        child:
-            const Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        child: const Row(children: [
           Padding(
             padding: EdgeInsets.only(right: 5),
             child: Text(
@@ -43,7 +42,7 @@ class _DatePickersState extends State<DatePickers> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          Center(child: Icon(Icons.calendar_month)),
+          Icon(size: 20, Icons.calendar_month),
         ]),
       ),
     );
