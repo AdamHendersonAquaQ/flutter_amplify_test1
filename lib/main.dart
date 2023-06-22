@@ -10,7 +10,7 @@ import 'package:praxis_internals/pages/trades/trades_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await PraxisService.configure("prod");
+  await PraxisService.configure("dev");
 
   runApp(const MyApp());
 }
