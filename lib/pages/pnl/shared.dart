@@ -42,7 +42,10 @@ class _DatePickersState extends State<DatePickers> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          Icon(size: 20, Icons.calendar_month),
+          Padding(
+            padding: EdgeInsets.only(bottom: 5),
+            child: Icon(size: 20, Icons.calendar_month),
+          ),
         ]),
       ),
     );
