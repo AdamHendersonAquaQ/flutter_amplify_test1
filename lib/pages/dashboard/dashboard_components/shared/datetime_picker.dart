@@ -26,49 +26,48 @@ class _DatePickersState extends State<DateTimePicker> {
     DateTime initialDate =
         DateTime.tryParse(widget.heading.value) ?? widget.date;
     if (initialDate.isAfter(widget.date)) initialDate = widget.date;
-    return SizedBox(
-      width: 20,
-      child: IconButton(
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
-        onPressed: () async {
-          DateTime? date = await showDatePicker(
-            context: context,
-            initialDate: initialDate,
-            firstDate: widget.date.subtract(const Duration(days: 1)),
-            lastDate: widget.date,
-          );
-          if (date != null) {
-            if (context.mounted) {
-              TimeOfDay? time = await showTimePicker(
-                context: context,
-                initialTime: TimeOfDay.fromDateTime(
-                    DateTime.tryParse(widget.heading.value) ?? DateTime.now()),
-                orientation: Orientation.portrait,
-                builder: (BuildContext context, Widget? child) {
-                  return Directionality(
-                    textDirection: TextDirection.ltr,
-                    child: MediaQuery(
-                      data: MediaQuery.of(context).copyWith(
-                        alwaysUse24HourFormat: true,
-                      ),
-                      child: child!,
+    return IconButton(
+      iconSize: 23,
+      visualDensity: VisualDensity.compact,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+      onPressed: () async {
+        DateTime? date = await showDatePicker(
+          context: context,
+          initialDate: initialDate,
+          firstDate: widget.date.subtract(const Duration(days: 1)),
+          lastDate: widget.date,
+        );
+        if (date != null) {
+          if (context.mounted) {
+            TimeOfDay? time = await showTimePicker(
+              context: context,
+              initialTime: TimeOfDay.fromDateTime(
+                  DateTime.tryParse(widget.heading.value) ?? DateTime.now()),
+              orientation: Orientation.portrait,
+              builder: (BuildContext context, Widget? child) {
+                return Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      alwaysUse24HourFormat: true,
                     ),
-                  );
-                },
-              );
-              if (time != null) {
-                date = date.copyWith(minute: time.minute, hour: time.hour);
-              }
+                    child: child!,
+                  ),
+                );
+              },
+            );
+            if (time != null) {
+              date = date.copyWith(minute: time.minute, hour: time.hour);
             }
-            widget.setDate(date);
           }
-          setState(() {
-            selectedDate = date;
-          });
-        },
-        icon: const Icon(Icons.calendar_month),
-      ),
+          widget.setDate(date);
+        }
+        setState(() {
+          selectedDate = date;
+        });
+      },
+      icon: const Icon(Icons.calendar_month),
     );
   }
 }

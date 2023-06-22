@@ -278,7 +278,7 @@ class _FilterTextBoxState extends State<FilterTextBox> {
           ),
           widget.filter.valueType == "DateTime"
               ? Padding(
-                  padding: const EdgeInsets.only(top: 5),
+                  padding: const EdgeInsets.only(top: 7),
                   child: DateTimePicker(
                     heading: widget.filter,
                     date: widget.date ?? DateTime.now(),

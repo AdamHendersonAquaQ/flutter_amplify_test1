@@ -43,7 +43,7 @@ class _DatePickersState extends State<DatePickers> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          Icon(Icons.calendar_month),
+          Center(child: Icon(Icons.calendar_month)),
         ]),
       ),
     );
