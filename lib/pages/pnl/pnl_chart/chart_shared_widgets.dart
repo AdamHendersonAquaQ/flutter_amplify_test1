@@ -16,7 +16,7 @@ List<TouchedSpotIndicatorData?> getLineSpots(
     final spot = barData.spots[spotIndex];
     if (spot.x == 0) return null;
     return TouchedSpotIndicatorData(
-      const FlLine(color: praxisGreen, strokeWidth: 4, dashArray: [20, 15]),
+      FlLine(color: praxisGreen, strokeWidth: 4, dashArray: [20, 15]),
       FlDotData(
         getDotPainter: (spot, percent, barData, index) {
           return FlDotCirclePainter(
@@ -48,4 +48,4 @@ FlBorderData get borderData => FlBorderData(
       ),
     );
 
-FlGridData get gridData => const FlGridData(show: false);
+FlGridData get gridData => FlGridData(show: false);
