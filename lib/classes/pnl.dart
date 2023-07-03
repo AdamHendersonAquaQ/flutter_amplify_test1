@@ -1,19 +1,19 @@
 class PnL {
-  final double? totalPnL;
-  final double? previousPnL;
-  final int change;
+  final String source;
+  final double sum;
+  final double? previousSum;
 
   PnL({
-    required this.totalPnL,
-    this.previousPnL,
-    required this.change,
+    required this.source,
+    required this.sum,
+    this.previousSum,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'totalPnL': totalPnL,
-      'previousPnL': previousPnL,
-      'change': change,
+      'source': source,
+      'sum': sum,
+      'previousSum': previousSum,
     };
   }
 }

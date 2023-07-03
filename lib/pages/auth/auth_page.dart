@@ -84,7 +84,7 @@ class _AuthState extends State<AuthPage> {
                     ? Column(children: [
                         Image.asset(
                           'assets/images/praxis_hd.png',
-                          //package: "praxis_internals",
+                          package: "praxis_internals",
                           width: 400,
                         ),
                         Padding(

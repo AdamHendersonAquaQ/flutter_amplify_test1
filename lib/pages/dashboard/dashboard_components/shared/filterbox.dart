@@ -56,7 +56,7 @@ class _FilterState extends State<FilterBox> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
+      padding: const EdgeInsets.fromLTRB(5, 15, 10, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

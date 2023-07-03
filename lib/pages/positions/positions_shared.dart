@@ -57,19 +57,22 @@ List<Heading> headingList = [
       comparator: Comparator.isBetween),
 ];
 
-String url = "${EnvConfig.restUrl}/prices";
+String url = "${EnvConfig.restUrl}/v1/positions";
+
 List<Position> getPositions(var body) {
   var responseData = json.decode(body);
 
   List<Position>? positions = [];
   for (var pos in responseData) {
+    double hedgePos = pos["hedge_position"] ?? 0;
+    double clientPos = pos["client_position"] ?? pos["sum"] ?? 0;
     Position newPosition = Position(
-        position: pos["sum"],
-        symbol: pos["praxis_symbol"],
-        hedge: pos["hedge"] ?? 0,
-        nett: pos["nett"] ?? 0,
+        position: clientPos,
+        symbol: pos["symbol"] ?? pos["praxis_symbol"] ?? "",
+        hedge: hedgePos,
+        nett: clientPos - hedgePos,
         latestPrice: pos["latest_price"] ?? 0,
-        value: pos["value"] ?? 0);
+        value: ((pos["client_value"] ?? 0) - (pos["hedge_value"] ?? 0)).abs());
 
     positions.add(newPosition);
   }
@@ -79,11 +82,18 @@ List<Position> getPositions(var body) {
 
 Future<void> exportCSV(data) async {
   List<List<dynamic>> rows = [];
-  rows.add(["symbol", "position", "latestPrice"]);
+  rows.add(["symbol", "latestPrice", "position", "hedge", "nett", "value"]);
 
   for (var pos in data!) {
     var map = pos.toMap();
-    rows.add([map["symbol"], map["position"], map["latestPrice"]]);
+    rows.add([
+      map["symbol"],
+      map["latestPrice"],
+      map["position"],
+      map["hedge"],
+      map["nett"],
+      map["value"]
+    ]);
   }
 
   String csv = const ListToCsvConverter().convert(rows);

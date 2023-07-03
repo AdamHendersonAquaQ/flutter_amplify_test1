@@ -10,7 +10,7 @@ import 'package:praxis_internals/pages/trades/trades_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await PraxisService.configure("dev");
+  await PraxisService.configure("prod");
 
   runApp(const MyApp());
 }
@@ -60,7 +60,7 @@ class MyAppState extends State<MyApp> {
             ),
         '/positions': (BuildContext context) =>
             const AuthFrame(page: PositionsPage(), index: 1),
-        '/dailypnl': (BuildContext context) =>
+        '/pnl': (BuildContext context) =>
             const AuthFrame(page: PnLChartPage(), index: 2),
         '/trades': (BuildContext context) => const AuthFrame(
               page: TradesPage(),

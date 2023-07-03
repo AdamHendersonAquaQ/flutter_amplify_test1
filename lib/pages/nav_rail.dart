@@ -14,7 +14,7 @@ class NavRail extends StatefulWidget {
 final List<String> destinations = [
   "dashboard",
   "positions",
-  "dailypnl",
+  "pnl",
   "trades",
 ];
 

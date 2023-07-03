@@ -144,24 +144,29 @@ class _PositionsState extends State<PositionsPage> {
                   ),
                   SizedBox(
                     width: 415,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 5, left: 5),
-                          child: Text(
-                            'Filter',
-                            style: TextStyle(fontSize: 18),
-                          ),
+                    child: SingleChildScrollView(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(top: 5),
+                              child: Text(
+                                'Filter',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 5),
+                              child: noPadDivider,
+                            ),
+                            FilterBox(
+                                filterValues: headingList,
+                                filterMethod: _filterData)
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: noPadDivider,
-                        ),
-                        FilterBox(
-                            filterValues: headingList,
-                            filterMethod: _filterData)
-                      ],
+                      ),
                     ),
                   ),
                 ],

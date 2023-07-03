@@ -7,16 +7,16 @@ import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 import 'package:praxis_internals/classes/pnl2.dart';
-import 'package:praxis_internals/pages/pnl/pnl_chart/pnl_chart_daily.dart';
+import 'package:praxis_internals/pages/pnl/pnl_chart/pnl_chart_monthly.dart';
 
-class PnLDailyPage extends StatefulWidget {
-  const PnLDailyPage({super.key});
+class PnLMonthlyPage extends StatefulWidget {
+  const PnLMonthlyPage({super.key});
 
   @override
-  State<PnLDailyPage> createState() => _PnLDailyState();
+  State<PnLMonthlyPage> createState() => _PnLMonthlyState();
 }
 
-class _PnLDailyState extends State<PnLDailyPage> {
+class _PnLMonthlyState extends State<PnLMonthlyPage> {
   bool runStream = false;
   @override
   void initState() {
@@ -39,21 +39,20 @@ class _PnLDailyState extends State<PnLDailyPage> {
 
   Stream<List<PnL2>> pnlStream() async* {
     while (runStream) {
-      DateTime date = DateTime.now();
-      String url =
-          "${EnvConfig.restUrl}/v1/daily-pnl/?date=${date.year}-${date.month}-${date.day}";
+      String url = "${EnvConfig.restUrl}/v1/monthly-pnl/";
       try {
         final response = await NewClient.client!.get(Uri.parse(url));
+
         var responseData = json.decode(response.body);
 
         List<PnL2>? cPnls = [];
         List<PnL2>? hPnls = [];
 
         for (var pnl in responseData) {
-          if (pnl["pnl_change"] != null) {
+          if (pnl["sum"] != null) {
             PnL2 newPnL = PnL2(
                 eventTime: DateTime.parse(pnl["event_time"]).toLocal(),
-                pnlChange: pnl["pnl_change"]);
+                pnlChange: pnl["sum"]);
             if (pnl["hedge_or_client"] == "HEDGE") {
               hPnls.add(newPnL);
             } else {
@@ -62,13 +61,14 @@ class _PnLDailyState extends State<PnLDailyPage> {
           }
         }
         lastUpdated = DateTime.now();
-
+        cPnls.sort((a, b) => a.eventTime.compareTo(b.eventTime));
         clientData = cPnls;
+        hPnls.sort((a, b) => a.eventTime.compareTo(b.eventTime));
         hedgeData = hPnls;
       } catch (e) {
         clientData = clientData ?? [];
         hedgeData = hedgeData ?? [];
-        logger.e("Error retrieving PnL data from url: $url, retrying.");
+        logger.e("Error retrieving Monthly PnL data from url: $url, retrying.");
       }
 
       yield clientData!;
@@ -89,7 +89,7 @@ class _PnLDailyState extends State<PnLDailyPage> {
                     child: clientData!.isNotEmpty
                         ? Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 20, 3),
-                            child: PnLDailyChart(
+                            child: PnLMonthlyChart(
                               clientData: clientData!,
                               hedgeData: hedgeData!,
                               isDashboard: true,

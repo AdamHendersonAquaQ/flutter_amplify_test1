@@ -70,7 +70,7 @@ class _NewPasswordSectionState extends State<NewPasswordSection> {
             children: [
               Image.asset(
                 'assets/images/praxis_hd.png',
-                //package: "praxis_internals",
+                package: "praxis_internals",
                 width: 400,
               ),
               const Padding(

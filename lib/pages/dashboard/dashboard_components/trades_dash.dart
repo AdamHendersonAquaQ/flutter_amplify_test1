@@ -101,34 +101,36 @@ class _TradesState extends State<TradesDash> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
-            padding: const EdgeInsets.fromLTRB(20, 5, 20, 10),
+            padding: const EdgeInsets.fromLTRB(5, 5, 5, 10),
             child: StreamBuilder(
                 stream: tradeStream(),
                 builder: (BuildContext ctx, AsyncSnapshot snapshot) {
                   return Column(
                     children: [
-                      Subtitle(
-                          subtitle:
-                              "Trade Blotter (${DateTime.now().year}/${DateTime.now().month}/${DateTime.now().day})",
-                          tooltip: tradesTooltip,
-                          lastUpdated: lastUpdated ?? DateTime.now(),
-                          destination: "/trades",
-                          downloadCsv: data != null && data!.isNotEmpty
-                              ? _exportCSV
-                              : null,
-                          openDrawer: () => widget.openDrawer!(Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TradeSourceFilter(
-                                      sourceFilter: sourceFilter,
-                                      setSF: _setSF),
-                                  FilterBox(
-                                    filterValues: headingList,
-                                    filterMethod: _filterData,
-                                    date: DateTime.now(),
-                                  ),
-                                ],
-                              ))),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 5),
+                        child: Subtitle(
+                            subtitle:
+                                "Trade Blotter (${DateTime.now().year}/${DateTime.now().month}/${DateTime.now().day})",
+                            lastUpdated: lastUpdated ?? DateTime.now(),
+                            destination: "/trades",
+                            downloadCsv: data != null && data!.isNotEmpty
+                                ? _exportCSV
+                                : null,
+                            openDrawer: () => widget.openDrawer!(Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    TradeSourceFilter(
+                                        sourceFilter: sourceFilter,
+                                        setSF: _setSF),
+                                    FilterBox(
+                                      filterValues: headingList,
+                                      filterMethod: _filterData,
+                                      date: DateTime.now(),
+                                    ),
+                                  ],
+                                ))),
+                      ),
                       data == null || data!.isEmpty
                           ? Expanded(
                               child: Center(

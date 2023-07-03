@@ -125,7 +125,6 @@ class _TradesState extends State<TradesPage> {
                           Subtitle(
                             subtitle:
                                 "Trade Blotter (${date.day}/${date.month}/${date.year})",
-                            tooltip: tradesTooltip,
                             lastUpdated: lastUpdated ?? DateTime.now(),
                             downloadCsv: data != null && data!.isNotEmpty
                                 ? _exportCSV
@@ -169,10 +168,11 @@ class _TradesState extends State<TradesPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Padding(
-                              padding: EdgeInsets.only(top: 5, left: 5),
+                              padding: EdgeInsets.only(top: 5),
                               child: Text(
                                 'Filter',
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                             ),
                             Padding(
@@ -180,7 +180,7 @@ class _TradesState extends State<TradesPage> {
                               child: noPadDivider,
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(10, 10, 0, 5),
+                              padding: const EdgeInsets.fromLTRB(5, 10, 0, 5),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,

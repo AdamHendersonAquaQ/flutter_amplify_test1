@@ -1,4 +1,4 @@
-import 'package:praxis_internals/pages/dashboard/dashboard_components/dashboard_pnl/charts/pnl_daily.dart';
+import 'package:praxis_internals/pages/dashboard/dashboard_components/dashboard_pnl/charts/pnl_charts_dash.dart';
 import 'package:praxis_internals/pages/dashboard/dashboard_components/dashboard_pnl/figures/pnl_dash.dart';
 import 'package:praxis_internals/pages/dashboard/dashboard_components/positions_dash.dart';
 import 'package:praxis_internals/pages/dashboard/dashboard_components/shared/shared.dart';
@@ -58,13 +58,11 @@ class _DashboardState extends State<DashboardPage> {
                     child: Scaffold(
                       body: Column(
                         children: [
-                          const Expanded(
-                            child: PnLDailyPage(),
-                          ),
+                          const Expanded(child: PnLChartsDash()),
                           noPadDivider,
-                          const SizedBox(
-                            height: 37,
-                            child: PnLDash(),
+                          Container(
+                            constraints: const BoxConstraints(minHeight: 35),
+                            child: const PnLDash(),
                           )
                         ],
                       ),
@@ -107,7 +105,10 @@ class _DashboardState extends State<DashboardPage> {
                 ),
               ),
               noPadDivider,
-              drawer ?? const Text(""),
+              Padding(
+                padding: const EdgeInsets.only(left: 5),
+                child: drawer ?? const Text(""),
+              ),
             ],
           ),
         ),

@@ -20,14 +20,14 @@ class EnvConfig {
       poolId1 = 'us-east-1:31d9b307-a4e7-4e1f-9d0b-c3fc879212c2';
       region = 'us-east-1';
       poolId2 = 'us-east-1_wdcuCog22';
-      appClientId = '85cfdl5e0g031d81olu5v520t';
+      appClientId = '23ttn32trkga73r5i2pihv2kfh';
     } else {
       restUrl =
           "https://feziwb4p74.execute-api.us-east-2.amazonaws.com/prod/api";
       poolId1 = 'us-east-1:31d9b307-a4e7-4e1f-9d0b-c3fc879212c2';
       region = 'us-east-1';
       poolId2 = 'us-east-1_wdcuCog22';
-      appClientId = '85cfdl5e0g031d81olu5v520t';
+      appClientId = '23ttn32trkga73r5i2pihv2kfh';
     }
   }
 }

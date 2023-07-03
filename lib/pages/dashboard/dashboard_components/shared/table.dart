@@ -31,7 +31,7 @@ class NewTable extends StatefulWidget {
   State<NewTable> createState() => _NewTableState();
 }
 
-DataRow tableRow(pos, data, headings, bool? isSmall, bool? isPaginated) {
+DataRow tableRow(pos, data, headings, bool? isSmall) {
   return DataRow(
       color:
           MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
@@ -47,34 +47,47 @@ DataRow tableRow(pos, data, headings, bool? isSmall, bool? isPaginated) {
               ? Padding(
                   padding: const EdgeInsets.only(bottom: 1),
                   child: Container(
-                    width: double.infinity,
                     decoration: BoxDecoration(
                       color: Colors.red.withOpacity(0.8),
                     ),
                     child: textCell(data[pos], heading, isSmall ?? false),
                   ),
                 )
-              : (heading.headingType == "text"
-                  ? textCell(data[pos], heading, isSmall ?? false)
-                  : Padding(
+              : heading.name == "value"
+                  ? Padding(
                       padding: const EdgeInsets.only(bottom: 1),
                       child: Container(
-                        width: double.infinity,
                         decoration: BoxDecoration(
-                          color: data[pos].toMap()[heading.name] >= 0 &&
-                                  heading.name != "latestPrice"
+                          color: data[pos].nett >= 0
                               ? Colors.green.withOpacity(0.8)
                               : Colors.red.withOpacity(0.8),
                         ),
                         child: textCell(data[pos], heading, isSmall ?? false),
                       ),
-                    ))))
+                    )
+                  : (heading.headingType == "text"
+                      ? textCell(data[pos], heading, isSmall ?? false)
+                      : Padding(
+                          padding: const EdgeInsets.only(bottom: 1),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: data[pos].toMap()[heading.name] >= 0 &&
+                                      heading.name != "latestPrice"
+                                  ? Colors.green.withOpacity(0.8)
+                                  : Colors.red.withOpacity(0.8),
+                            ),
+                            child:
+                                textCell(data[pos], heading, isSmall ?? false),
+                          ),
+                        ))))
       ]);
 }
 
-NumberFormat numberFormat = NumberFormat("#,##0.000", "en_US");
+NumberFormat numberFormat = NumberFormat("#,##0.00###", "en_US");
 List<String> numFormatList = ["latestPrice", "lastPrice"];
-NumberFormat numberFormatOneDec = NumberFormat("#,##0.0", "en_US");
+NumberFormat numberFormatThreeDec = NumberFormat("#,##0.###", "en_US");
+List<String> threeDecFormatList = ["value"];
+NumberFormat numberFormatOneDec = NumberFormat("#,##0.#", "en_US");
 List<String> oneDecFormatList = ["quantity"];
 NumberFormat numberFormatNoDec = NumberFormat("#,##0", "en_US");
 List<String> noDecFormatList = ["position", "hedge", "nett"];
@@ -82,6 +95,7 @@ List<String> noDecFormatList = ["position", "hedge", "nett"];
 Center textCell(pos, Heading heading, bool isSmall) {
   var text = pos.toMap()[heading.name];
 
+  var textStyle = TextStyle(fontSize: isSmall ? 11 : 14);
   return Center(
     child: heading.name != "transactionTime"
         ? SelectableText(
@@ -89,29 +103,40 @@ Center textCell(pos, Heading heading, bool isSmall) {
                 ? " "
                 : numFormatList.contains(heading.name)
                     ? numberFormat.format(text)
-                    : oneDecFormatList.contains(heading.name)
-                        ? numberFormatOneDec.format(text)
-                        : noDecFormatList.contains(heading.name)
-                            ? numberFormatNoDec.format(text.round())
-                            : pos.toMap()[heading.name].toString(),
-            style: TextStyle(fontSize: isSmall ? 13.5 : 14),
+                    : threeDecFormatList.contains(heading.name)
+                        ? numberFormatThreeDec.format(text)
+                        : oneDecFormatList.contains(heading.name)
+                            ? numberFormatOneDec.format(text)
+                            : noDecFormatList.contains(heading.name)
+                                ? numberFormatNoDec.format(text.round())
+                                : pos.toMap()[heading.name].toString(),
+            style: textStyle,
           )
         : Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 5, top: 2, right: 2),
+                padding: const EdgeInsets.only(left: 5, right: 2),
                 child: SizedBox(
                   width: 10,
-                  child: Text(
-                    pos.toMap()["source"] == "Hedge" ? "*" : " ",
-                    style: const TextStyle(fontSize: 20),
-                  ),
+                  child: pos.toMap()["source"] != "Onezero"
+                      ? const Tooltip(
+                          message: "* = Hedge\n   = Client",
+                          child: Text(
+                            "*",
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        )
+                      : const Text(
+                          "",
+                          style: TextStyle(fontSize: 20),
+                        ),
                 ),
               ),
               SelectableText(
                 pos.toMap()[heading.name].toString(),
-                style: TextStyle(fontSize: isSmall ? 13.5 : 14),
+                style: textStyle,
               ),
               const Text("")
             ],
@@ -133,7 +158,7 @@ class MyData extends DataTableSource {
   int get selectedRowCount => 0;
   @override
   DataRow getRow(int index) {
-    return tableRow(index, data, headings, null, true);
+    return tableRow(index, data, headings, null);
   }
 }
 
@@ -141,6 +166,9 @@ class _NewTableState extends State<NewTable> {
   double rowHeight = 25;
   @override
   Widget build(BuildContext context) {
+    bool isSmall = (widget.isDashboard != null) &&
+        MediaQuery.of(context).size.width < 1500 &&
+        widget.headings.length >= 5;
     return Expanded(
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -160,7 +188,7 @@ class _NewTableState extends State<NewTable> {
                       sortAscending: widget.isSortAsc,
                       columns: [
                         for (var heading in widget.headings)
-                          tableColumn(heading),
+                          tableColumn(heading, isSmall),
                       ],
                       source: MyData(
                         data: widget.data,
@@ -186,18 +214,12 @@ class _NewTableState extends State<NewTable> {
                       sortAscending: widget.isSortAsc,
                       columns: [
                         for (var heading in widget.headings)
-                          tableColumn(heading),
+                          tableColumn(heading, isSmall)
                       ],
                       rows: [
                         for (var pos in widget.data)
-                          tableRow(
-                              widget.data.indexOf(pos),
-                              widget.data,
-                              widget.headings,
-                              (widget.isDashboard != null) &&
-                                  MediaQuery.of(context).size.width < 1500 &&
-                                  widget.headings.length >= 5,
-                              null),
+                          tableRow(widget.data.indexOf(pos), widget.data,
+                              widget.headings, isSmall),
                       ],
                     ),
             )),
@@ -205,31 +227,13 @@ class _NewTableState extends State<NewTable> {
     );
   }
 
-  DataColumn tableColumn(Heading heading) {
+  DataColumn tableColumn(Heading heading, bool isSmall) {
     return DataColumn(
       label: Expanded(
         child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              heading.name == "transactionTime"
-                  ? const Tooltip(
-                      message: "* = Hedge\n   = Client",
-                      child: SizedBox(
-                        width: 30,
-                        child: Center(
-                          child: Text(
-                            " ",
-                          ),
-                        ),
-                      ),
-                    )
-                  : const Text(" "),
-              Text(
-                heading.label,
-              ),
-              const Text("")
-            ],
+          child: Text(
+            heading.label,
+            style: TextStyle(fontSize: isSmall ? 13 : 14),
           ),
         ),
       ),

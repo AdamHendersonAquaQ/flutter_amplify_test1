@@ -7,7 +7,7 @@ import 'package:praxis_internals/classes/file_download.dart';
 import 'package:praxis_internals/classes/heading.dart';
 import 'package:praxis_internals/classes/trade.dart';
 
-String url = "${EnvConfig.restUrl}/trades";
+String url = "${EnvConfig.restUrl}/v1/trades";
 
 Future<void> exportCSV(List data) async {
   List<List<dynamic>> rows = [];
@@ -17,7 +17,8 @@ Future<void> exportCSV(List data) async {
     "symbol",
     "last price",
     "quanity",
-    "client name"
+    "client name",
+    "source"
   ]);
 
   for (var pos in data) {
@@ -28,7 +29,8 @@ Future<void> exportCSV(List data) async {
       map["symbol"],
       map["lastPrice"],
       map["quantity"],
-      map["clientName"]
+      map["clientName"],
+      map["source"]
     ]);
   }
 
@@ -82,10 +84,12 @@ List<Trade> getTrades(var body) {
   List<Trade> trades = [];
   for (var trade in responseData) {
     double quant = trade["quantity"];
-    if (trade["side"] == "BUY") {
+    String source = trade["source_system"] ?? "Onezero";
+
+    if ((trade["side"] == "BUY" && source != "CMG") ||
+        (trade["side"] == "SELL" && source == "CMG")) {
       quant = quant * -1;
     }
-    String source = trade["source_system"] ?? "Onezero";
     Trade newTrade = Trade(
         id: trade["id"],
         transactionTime: DateTime.parse(trade["transact_time"]).toLocal(),
@@ -93,41 +97,12 @@ List<Trade> getTrades(var body) {
         lastPrice: trade["last_price"],
         quantity: quant,
         symbol: trade["praxis_symbol"] ?? trade["symbol"],
-        source: source == "Onezero" ? "Client" : "Hedge");
+        source: source);
 
     trades.add(newTrade);
   }
   return trades;
 }
-
-const tradesTooltip = TextSpan(children: [
-  TextSpan(
-      text: "Bl",
-      style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Color.fromARGB(255, 141, 186, 201))),
-  TextSpan(
-      text: "ue",
-      style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Color.fromARGB(255, 149, 156, 158))),
-  TextSpan(text: " = Client\n", style: TextStyle(fontSize: 14)),
-  TextSpan(
-      text: "Gr",
-      style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Color.fromARGB(255, 111, 192, 135))),
-  TextSpan(
-      text: "een",
-      style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-          color: Color.fromARGB(255, 150, 201, 165))),
-  TextSpan(text: " = Hedge", style: TextStyle(fontSize: 14)),
-]);
 
 class TradeSourceFilter extends StatefulWidget {
   const TradeSourceFilter(
@@ -151,7 +126,7 @@ class _TradeSourceFilterState extends State<TradeSourceFilter> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 15, 10, 10),
+      padding: const EdgeInsets.fromLTRB(5, 15, 10, 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
